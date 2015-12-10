@@ -23,6 +23,9 @@
 # Default configuration options
 CONFIGURE_OPTIONS="--prefix=/usr"
 
+# TODO: Make this a configuration item somewhere
+MAKE_CONCURRENCY="-j5"
+
 # Perform some sanity checks or bail immediately
 function sanity_check()
 {
@@ -130,7 +133,11 @@ function pkg_setup()
 function pkg_build()
 {
     check_prereqs
-    echo "Build: Nothing to be done for ${PKG_NAME}"
+
+    local build_dir=`pkg_build_dir`
+    pushd "${build_dir}" >/dev/null || do_fatal "Unable to use build directory"
+
+    (set -x ; eval "make ${MAKE_CONCURRENCY}" || do_fatal "Failed to build ${PKG_NAME}")
 }
 
 function pkg_install()
