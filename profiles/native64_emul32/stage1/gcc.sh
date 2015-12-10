@@ -36,6 +36,7 @@ source "${FUNCTIONSFILE}"
 
 CONFIGURE_OPTIONS+="--target=${XTOOLCHAIN} \
                     --enable-languages=c,c++ \
+                    --with-arch32=i686 \
                     --with-newlib \
                     --without-headers \
                     --disable-nls \
@@ -50,7 +51,7 @@ CONFIGURE_OPTIONS+="--target=${XTOOLCHAIN} \
                     --disable-libssp \
                     --disable-libvtv \
                     --disable-libcilkrts \
-                    --with-multilib-list=m32,m64
+                    --with-multilib-list=m32,m64 \
                     --disable-libstdc++-v3"
 pkg_setup()
 {
