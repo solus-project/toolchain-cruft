@@ -40,10 +40,35 @@ function build_package()
         exit 1
     fi
 
-    eval "./${1}.sh" fetch   || do_fatal "Failed to fetch package ${1}"
-    eval "./${1}.sh" setup   || do_fatal "Failed to setup package ${1}"
-    eval "./${1}.sh" build   || do_fatal "Failed to build package ${1}"
-    eval "./${1}.sh" install || do_fatal "Failed to install package ${1}"
+    local tfile="${WORKDIR}/${1}.status"
+    local tstatus="$(cat ${tfile} 2>/dev/null)"
+
+    case ${tstatus} in
+        fetch)
+            steps=(setup build install)
+            ;;
+        setup)
+            steps=(build install)
+            ;;
+        build)
+            steps=(install)
+            ;;
+        install)
+            echo "Skipping ${1} as it is complete"
+            return
+            ;;
+        *)
+            steps=(fetch setup build install)
+            ;;
+    esac
+
+    for step in "${steps[@]}" ; do
+        eval "./${1}.sh" "${step}" || do_fatal "Failure in ${1}: ${step}"
+        if [[ ! -d "${WORKDIR}" ]]; then
+            mkdir -p "${WORKDIR}" || do_fatal "Cannot create work directory"
+        fi
+        echo "${step}" > "${tfile}"
+    done
 }
 
 function build_all()
