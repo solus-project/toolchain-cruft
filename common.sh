@@ -148,10 +148,14 @@ function pkg_configure()
 
     pushd "${build_dir}" >/dev/null || do_fatal "Unable to use build directory"
 
-    # TODO: Configure
-    (set -x ; eval "${pkg_dir}/configure ${CONFIGURE_OPTIONS}" || do_fatal "Failed to configure ${PKG_NAME}")
+    pkg_configure_no_cd
     
     popd >/dev/null
+}
+
+function pkg_configure_no_cd()
+{
+    (set -x ; eval "${pkg_dir}/configure ${CONFIGURE_OPTIONS}" || do_fatal "Failed to configure ${PKG_NAME}")
 }
 
 function pkg_setup()
@@ -167,6 +171,11 @@ function pkg_build()
     local build_dir=`pkg_build_dir`
     pushd "${build_dir}" >/dev/null || do_fatal "Unable to use build directory"
 
+    (set -x ; eval "make ${MAKE_CONCURRENCY}" || do_fatal "Failed to build ${PKG_NAME}")
+}
+
+function pkg_make()
+{
     (set -x ; eval "make ${MAKE_CONCURRENCY}" || do_fatal "Failed to build ${PKG_NAME}")
 }
 

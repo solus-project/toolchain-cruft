@@ -73,12 +73,13 @@ pkg_setup()
     # Configure 32-bit
     pushd b32 || do_fatal "could not change to b32"
     echo "slibdir=/usr/lib32" > configparams
-    CONFIGURE_OPTIONS="${CONFIGURE_OPTIONS32}" pkg_configure || do_fatal "Could not configure glibc 32-bit"
+    CONFIGURE_OPTIONS="${CONFIGURE_OPTIONS32}" pkg_configure_no_cd || do_fatal "Could not configure glibc 32-bit"
     popd
 
+    # Now 64-bit
     pushd b64 > /dev/null || do_fatal "could not change to b64"
     echo "slibdir=/usr/lib64" > configparams
-    CONFIGURE_OPTIONS="${CONFIGURE_OPTIONS64}" pkg_configure || do_fatal "Could not configure glibc 64-bit"
+    CONFIGURE_OPTIONS="${CONFIGURE_OPTIONS64}" pkg_configure_no_cd || do_fatal "Could not configure glibc 64-bit"
     popd > /dev/null
 
     popd > /dev/null
@@ -86,8 +87,23 @@ pkg_setup()
 
 pkg_build()
 {
-    echo "Not yet implemented"
-}
+    local builddir=`pkg_build_dir`
+    pushd "${builddir}" >/dev/null || do_fatal "Could not change to builddir"
+
+    # Build 32-bit glibc
+    pushd b32 || do_fatal "could not change to b32"
+    ls -1
+    pkg_make
+    popd >/dev/null
+
+    # Build 64-bit glibc
+    pushd b64 || do_fatal "could not change to b64"
+    pkg_make
+    popd >/dev/null
+
+
+    popd >/dev/null
+    }
 
 pkg_install()
 {
