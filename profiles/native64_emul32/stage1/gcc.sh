@@ -34,8 +34,7 @@ declare -A PKG_EXTRAS=(
 
 source "${FUNCTIONSFILE}"
 
-CONFIGURE_OPTIONS+="--target=${TOOLCHAIN} \
-                    --with-arch32=i686 \
+CONFIGURE_OPTIONS+="--target=${XTOOLCHAIN} \
                     --enable-languages=c,c++ \
                     --with-newlib \
                     --without-headers \
@@ -51,6 +50,7 @@ CONFIGURE_OPTIONS+="--target=${TOOLCHAIN} \
                     --disable-libssp \
                     --disable-libvtv \
                     --disable-libcilkrts \
+                    --with-multilib-list=m32,m64
                     --disable-libstdc++-v3"
 pkg_setup()
 {
@@ -72,11 +72,6 @@ pkg_setup()
 
     # Now go back to the main configure routine
     pkg_configure
-}
-
-pkg_install()
-{
-    echo "Not yet done"
 }
 
 # Now handle the arguments

@@ -21,7 +21,9 @@
 # THE SOFTWARE.
 
 export TOOLCHAIN="x86_64-solus-linux"
+export XTOOLCHAIN="x86_64-bootstrap-linux"
 export TOOLCHAIN32="i686-solus-linux"
+export XTOOLCHAIN32="i686-bootstrap-linux"
 export WORKDIRBASE="`realpath ./BUILD/`"
 export FUNCTIONSFILE="`realpath ./common.sh`"
 export SUBFILE="`realpath ./sub_common.sh`"

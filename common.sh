@@ -170,10 +170,19 @@ function pkg_build()
     (set -x ; eval "make ${MAKE_CONCURRENCY}" || do_fatal "Failed to build ${PKG_NAME}")
 }
 
-function pkg_install()
+function make_install()
 {
     check_prereqs
-    echo "Install: Nothing to be done for ${PKG_NAME}"
+
+    local build_dir=`pkg_build_dir`
+    pushd "${build_dir}" >/dev/null || do_fatal "Unable to use build directory"
+
+    (set -x ; eval "make ${MAKE_CONCURRENCY} install $*" || do_fatal "Failed to build ${PKG_NAME}")
+}
+
+function pkg_install()
+{
+    make_install
 }
 
 function handle_args()

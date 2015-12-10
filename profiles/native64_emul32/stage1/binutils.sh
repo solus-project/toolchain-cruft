@@ -32,8 +32,7 @@ CONFIGURE_OPTIONS+="--with-lib-path=/usr/lib64:/usr/lib:/lib:/lib64:/usr/lib32:/
                     --disable-nls \
                     --disable-werror \
                     --disable-gold \
-                    --build=${TOOLCHAIN} \
-                    --target=${TOOLCHAIN} \
+                    --target=${XTOOLCHAIN} \
                     --enable-64-bit-bfd"
 
 # Now handle the arguments
