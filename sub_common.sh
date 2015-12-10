@@ -33,6 +33,7 @@ function build_package()
         exit 1
     fi
 
+    eval "./${1}.sh" fetch   || do_fatal "Failed to fetch package ${1}"
     eval "./${1}.sh" setup   || do_fatal "Failed to setup package ${1}"
     eval "./${1}.sh" build   || do_fatal "Failed to build package ${1}"
     eval "./${1}.sh" install || do_fatal "Failed to install package ${1}"

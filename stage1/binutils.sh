@@ -22,6 +22,8 @@
 
 # Always set PKG_NAME
 PKG_NAME="binutils"
+PKG_URL="http://ftp.gnu.org/gnu/binutils/binutils-2.25.1.tar.bz2"
+PKG_HASH="b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22"
 
 source "${FUNCTIONSFILE}"
 

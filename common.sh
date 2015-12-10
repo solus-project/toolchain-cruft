@@ -32,12 +32,41 @@ function sanity_check()
         echo "PKG_NAME is not set in ${0}"
         exit 1
     fi
+
+    if [[ -z "${PKG_URL}" ]]; then
+        echo "PKG_URL is not set in ${0}"
+        exit 1
+    fi
+    if  [[ -z "${PKG_HASH}" ]]; then
+        echo "PKG_HASH is not set in ${0}"
+    fi
 }
 
 function do_fatal()
 {
     echo "$*"
     exit 1
+}
+
+function pkg_fetch()
+{
+    local filename="$(basename ${PKG_URL})"
+    local tarball="${SOURCESDIR}/${filename}"
+    if [[ -f "${tarball}" ]]; then
+        echo "${filename} exists, skipping download"
+    else
+        # Fetch the tarball
+        pushd "${SOURCESDIR}" >/dev/null || do_fatal "Failed to change to sources dir"
+        wget "${PKG_URL}" || do_fatal "Failed to retrieve: ${PKG_URL}"
+        popd >/dev/null
+    fi
+
+    # Ensure hash is consistent
+    local hash="$(sha256sum ${SOURCESDIR}/${filename}|cut -f 1 -d ' ')"
+    echo "Checking hash for ${PKG_NAME}: ${filename}"
+    if [[ "${hash}" != "${PKG_HASH}" ]]; then
+        do_fatal "Incorrect hash for ${filename}, expected: ${PKG_HASH}"
+    fi
 }
 
 function pkg_setup()
@@ -61,6 +90,9 @@ function handle_args()
         do_fatal "Missing arguments for ${PKG_NAME}"
     fi
     case $1 in
+        fetch)
+            pkg_fetch
+            ;;
         setup)
             pkg_setup
             ;;

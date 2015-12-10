@@ -25,6 +25,7 @@ export TOOLCHAIN32="i686-solus-linux"
 export WORKDIRBASE="`realpath ./BUILD/`"
 export FUNCTIONSFILE="`realpath ./common.sh`"
 export SUBFILE="`realpath ./sub_common.sh`"
+export SOURCESDIR="`realpath ./sources`"
 
 function execute_stage()
 {
