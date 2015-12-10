@@ -36,7 +36,7 @@ pkg_build()
 
 pkg_setup()
 {
-    return
+    pkg_extract
 }
 
 pkg_install()
