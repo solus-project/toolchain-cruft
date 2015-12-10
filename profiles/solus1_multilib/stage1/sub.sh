@@ -24,4 +24,8 @@ source "${SUBFILE}"
 
 PACKAGES=(binutils)
 
+old_path="${PATH}"
+
+export PATH="${PKG_INSTALL_DIR}/bin:${PKG_INSTALL_DIR}/usr/bin:${PATH}"
+
 build_all
