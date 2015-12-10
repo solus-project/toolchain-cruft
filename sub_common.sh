@@ -20,10 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+trap 'do_cleanup; exit' SIGHUP SIGINT SIGTERM EXIT
+
 function do_fatal()
 {
     echo "$*"
     exit 1
+}
+
+function do_cleanup()
+{
+    echo "TODO: Add cleanup handler"
 }
 
 function build_package()
