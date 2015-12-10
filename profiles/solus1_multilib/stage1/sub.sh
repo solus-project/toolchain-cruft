@@ -22,7 +22,7 @@
 
 source "${SUBFILE}"
 
-PACKAGES=(binutils)
+PACKAGES=(binutils gcc)
 
 old_path="${PATH}"
 
