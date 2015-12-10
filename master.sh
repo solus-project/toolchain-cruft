@@ -26,7 +26,10 @@ export TOOLCHAIN
 export XTOOLCHAIN
 export TOOLCHAIN32
 export XTOOLCHAIN32
+export BUILD_PROFILE
 
+
+# Required directories
 export WORKDIRBASE="`realpath ./BUILD/`"
 export FUNCTIONSFILE="`realpath ./common.sh`"
 export SUBFILE="`realpath ./sub_common.sh`"
@@ -35,8 +38,6 @@ export SOURCESDIR="`realpath ./sources`"
 export PROFILEDIR="`realpath ./profiles`"
 export PATCHESDIR="`realpath ./patches`"
 
-# Hard coded until we add a config file.
-export BUILD_PROFILE="native64_emul32"
 
 function do_fatal()
 {
