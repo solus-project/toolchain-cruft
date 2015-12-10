@@ -27,22 +27,23 @@ PKG_HASH="b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22"
 
 source "${FUNCTIONSFILE}"
 
-SYSTEM_LIB_DIRS="/usr/lib64:/usr/lib:/lib:/lib64:/usr/lib32:/lib32"
-OUR_LIB_DIRS="${PKG_INSTALL_DIR}/usr/lib64:${PKG_INSTALL_DIR}/usr/lib32"
+OUR_LIB_DIRS="/tools/lib:/tools/lib32"
 
 # Define overrides
-CONFIGURE_OPTIONS+="--with-lib-path=${OUR_LIB_DIRS}:${SYSTEM_LIB_DIRS} \
+CONFIGURE_OPTIONS+="--with-lib-path=${SYSTEM_LIB_DIRS} \
                     --disable-nls \
                     --disable-werror \
                     --disable-gold \
                     --target=${XTOOLCHAIN} \
                     --with-sysroot=\"${PKG_INSTALL_DIR}\" \
-                    --libdir=/usr/lib64 \
                     --enable-64-bit-bfd"
 
 pkg_install()
 {
-    make_install "tooldir=/usr" DESTDIR="${PKG_INSTALL_DIR}"
+    mkdir -p /tools/lib
+    ln -sv lib /tools/lib64
+    mkdir -p /tools/lib32
+    make_install
 }
 
 # Now handle the arguments

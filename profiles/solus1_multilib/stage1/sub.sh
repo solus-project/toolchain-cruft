@@ -26,18 +26,18 @@ PACKAGES=(binutils gcc linux-headers glibc)
 
 old_path="${PATH}"
 
-export PATH="${PKG_INSTALL_DIR}/bin:${PKG_INSTALL_DIR}/usr/bin:${PATH}"
+export PATH="/tools/bin:/tools/usr/bin:${PATH}"
 
-if [[ ! -d "${PKG_INSTALL_DIR}" ]]; then
-    mkdir -p "${PKG_INSTALL_DIR}"
+# We also have our own pre-requisites on the toolchain..
+export CONFIGURE_OPTIONS="--prefix=/tools "
+
+if [[ ! -d "${PKG_INSTALL_DIR}/tools" ]]; then
+    mkdir -p "${PKG_INSTALL_DIR}/tools" || do_fatal "Cannot create required tools directory"
 fi
 
-if [[ ! -d "${PKG_INSTALL_DIR}/usr/lib64" ]]; then
-    mkdir -p "${PKG_INSTALL_DIR}/usr/lib64"
-fi
-
-if [[ ! -e "${PKG_INSTALL_DIR}/usr/lib" ]]; then
-    ln -sv lib64 "${PKG_INSTALL_DIR}/usr/lib"
+# Ensure we have a /tools/ symlink
+if [[ ! -e /tools/ ]]; then
+    sudo ln -sv "${PKG_INSTALL_DIR}/tools" /tools || do_fatal "Cannot create required /tools/ symlink"
 fi
 
 build_all

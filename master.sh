@@ -36,9 +36,9 @@ export STAGEFILE="`realpath ./stage_common.sh`"
 export PROFILEDIR="`realpath ./profiles`"
 export PATCHESDIR="`realpath ./patches`"
 
-PKG_INSTALL_DIR="install"
 SOURCESDIR="sources"
 WORKDIRBASE="BUILD"
+PKG_INSTALL_DIR="BUILD/install"
 
 function do_fatal()
 {

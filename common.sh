@@ -21,7 +21,9 @@
 # THE SOFTWARE.
 
 # Default configuration options
-CONFIGURE_OPTIONS="--prefix=/usr "
+if [[ -z "${CONFIGURE_OPTIONS}" ]]; then
+    CONFIGURE_OPTIONS="--prefix=/usr "
+fi
 
 # TODO: Make this a configuration item somewhere
 MAKE_CONCURRENCY="-j5"
