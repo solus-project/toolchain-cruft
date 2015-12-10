@@ -25,7 +25,7 @@ function execute_stage()
     local stage="$1"
 
     export STAGE="stage${stage}"
-    export WORKDIR="${WORKDIRBASE}/${STAGE}"
+    export WORKDIR="${WORKDIRBASE}/${BUILD_PROFILE}/${STAGE}"
     pushd "${STAGE}" > /dev/null 2>/dev/null || exit 1
     ./sub.sh
     popd >/dev/null 2>/dev/null
