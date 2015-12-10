@@ -20,12 +20,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source "${SUBFILE}"
+# Always set PKG_NAME
+PKG_NAME="linux-headers"
+PKG_URL="https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.14.tar.gz"
+PKG_HASH="56293a972a9c251bc8a03709fe6eafb5ca1dab9a072f44dc767d2f3984d8ad41"
 
-PACKAGES=(binutils gcc linux-headers)
+source "${FUNCTIONSFILE}"
 
-old_path="${PATH}"
+pkg_build()
+{
+    local sourcedir=`pkg_source_dir`
+    pushd "${sourcedir}" >/dev/null
+    make mrproper
+}
 
-export PATH="${PKG_INSTALL_DIR}/bin:${PKG_INSTALL_DIR}/usr/bin:${PATH}"
+pkg_setup()
+{
+    return
+}
 
-build_all
+pkg_install()
+{
+    local sourcedir=`pkg_source_dir`
+    pushd "${sourcedir}" >/dev/null
+    make headers_install INSTALL_HDR_PATH=./leheaders
+    if [[ ! -d "${PKG_INSTALL_DIR}/usr/include" ]]; then
+        install -d -D -m 00766 "${PKG_INSTALL_DIR}/usr/include"
+    fi
+
+    cp -Rv leheaders/include/* "${PKG_INSTALL_DIR}/usr/include/."
+}
+
+# Now handle the arguments
+handle_args $*
