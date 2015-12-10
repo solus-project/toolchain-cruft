@@ -45,7 +45,7 @@ pkg_install()
     pushd "${sourcedir}" >/dev/null
     make headers_install INSTALL_HDR_PATH=./leheaders
     if [[ ! -d "${PKG_INSTALL_DIR}/usr/include" ]]; then
-        install -d -D -m 00766 "${PKG_INSTALL_DIR}/usr/include"
+        install -d -D -m 00755 "${PKG_INSTALL_DIR}/usr/include"
     fi
 
     cp -Rv leheaders/include/* "${PKG_INSTALL_DIR}/usr/include/."
