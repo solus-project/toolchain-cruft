@@ -27,27 +27,27 @@ PKG_HASH="eb731406903befef1d8f878a46be75ef862b9056ab0cde1626d08a7a05328948"
 
 source "${FUNCTIONSFILE}"
 
-CONFIGURE_COMMON="--disable-profile \
+CONFIGURE_COMMON="--prefix=/tools \
+                  --disable-profile \
                   --enable-kernel=2.6.25 \
                   --enable-add-ons \
                   --without-selinux \
                   libc_cv_forced_unwind=yes \
                   libc_cv_ctors_header=yes \
-                  --with-headers=\"${PKG_INSTALL_DIR}/usr/include\" \
+                  --with-headers=/tools/include \
                   libc_cv_c_cleanup=yes"
 
 CONFIGURE_OPTIONS32="${CONFIGURE_OPTIONS} \
                      ${CONFIGURE_COMMON} \
                      --host=${XTOOLCHAIN32} \
                      --build=${TOOLCHAIN} \
-                     --libdir=/usr/lib32 \
+                     --libdir=/tools/lib32 \
                      CC=\"${XTOOLCHAIN}-gcc -m32\" \
                      CXX=\"${XTOOLCHAIN}-g++ -m32\" "
 CONFIGURE_OPTIONS64="${CONFIGURE_OPTIONS} \
                      ${CONFIGURE_COMMON} \
                      --host=${XTOOLCHAIN} \
                      --build=${TOOLCHAIN} \
-                     --libdir=/usr/lib64 \
                      CC=\"${XTOOLCHAIN}-gcc -m64\" \
                      CXX=\"${XTOOLCHAIN}-g++ -m64\" "
                      
@@ -72,13 +72,12 @@ pkg_setup()
 
     # Configure 32-bit
     pushd b32 || do_fatal "could not change to b32"
-    echo "slibdir=/usr/lib32" > configparms
+    echo "slibdir=/tools/lib32" > configparms
     CONFIGURE_OPTIONS="${CONFIGURE_OPTIONS32}" pkg_configure_no_cd || do_fatal "Could not configure glibc 32-bit"
     popd
 
     # Now 64-bit
     pushd b64 > /dev/null || do_fatal "could not change to b64"
-    echo "slibdir=/usr/lib64" > configparms
     CONFIGURE_OPTIONS="${CONFIGURE_OPTIONS64}" pkg_configure_no_cd || do_fatal "Could not configure glibc 64-bit"
     popd > /dev/null
 
@@ -111,12 +110,12 @@ pkg_install()
 
     # Install 32-bit glibc
     pushd b32 || do_fatal "could not change to b32"
-    pkg_make install install_root="${PKG_INSTALL_DIR}" || do_fatal "Could not install 32-bit glibc"
+    pkg_make install
     popd >/dev/null
 
     # Install 64-bit glibc
     pushd b64 || do_fatal "could not change to b64"
-    pkg_make install install_root="${PKG_INSTALL_DIR}" || do_fatal "Could not install 64-bit glibc"
+    pkg_make install
     popd >/dev/null
 
 
