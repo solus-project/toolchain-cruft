@@ -97,7 +97,6 @@ pkg_setup()
     mv gmp-5.1.2 gmp
 
     # Apply patches
-    sed -e "s@\#\#INSTALL_PREFIX\#\#@${PKG_INSTALL_DIR}@g" "${PATCHESDIR}/gcc/paths.patch" | patch -p1 || do_fatal "Could not patch GCC"
     patch -p1 < "${PATCHESDIR}/gcc/0001-Prebuild-changes.patch" || do_fatal "Could not patch GCC"
 
     pkg_root_mangle
