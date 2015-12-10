@@ -69,6 +69,12 @@ pkg_setup()
     mv mpfr-3.1.2 mpfr
     tar xf "${SOURCESDIR}/gmp-5.1.2.tar.xz" || do_fatal "Could not extract gmp tarball"
     mv gmp-5.1.2 gmp
+
+    # Apply patches
+    for i in $(cat ${PATCHESDIR}/gcc/series); do
+        patch -p1 < "${PATCHESDIR}/gcc/${i}" || do_fatal "Could not patch GCC"
+    done
+
     popd >/dev/null
 
     # Now go back to the main configure routine

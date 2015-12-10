@@ -30,6 +30,7 @@ export SUBFILE="`realpath ./sub_common.sh`"
 export STAGEFILE="`realpath ./stage_common.sh`"
 export SOURCESDIR="`realpath ./sources`"
 export PROFILEDIR="`realpath ./profiles`"
+export PATCHESDIR="`realpath ./patches`"
 
 # Hard coded until we add a config file.
 export BUILD_PROFILE="native64_emul32"
