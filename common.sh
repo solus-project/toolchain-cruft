@@ -54,25 +54,39 @@ function do_fatal()
     exit 1
 }
 
-function pkg_fetch()
+function ensure_file_hash()
 {
-    local filename="$(basename ${PKG_URL})"
+    local url="${1}"
+    local filename="$(basename ${1})"
     local tarball="${SOURCESDIR}/${filename}"
+    local ehash="${2}"
+
     if [[ -f "${tarball}" ]]; then
         echo "${filename} exists, skipping download"
     else
         # Fetch the tarball
         pushd "${SOURCESDIR}" >/dev/null || do_fatal "Failed to change to sources dir"
-        wget "${PKG_URL}" || do_fatal "Failed to retrieve: ${PKG_URL}"
+        wget "${url}" || do_fatal "Failed to retrieve: ${url}"
         popd >/dev/null
     fi
 
     # Ensure hash is consistent
     local hash="$(sha256sum ${SOURCESDIR}/${filename}|cut -f 1 -d ' ')"
     echo "Checking hash for ${PKG_NAME}: ${filename}"
-    if [[ "${hash}" != "${PKG_HASH}" ]]; then
-        do_fatal "Incorrect hash for ${filename}, expected: ${PKG_HASH}"
+    if [[ "${hash}" != "${ehash}" ]]; then
+        do_fatal "Incorrect hash for ${filename}, expected: ${ehash}"
     fi
+}
+
+function pkg_fetch()
+{
+    ensure_file_hash "${PKG_URL}" "${PKG_HASH}"
+
+    # See if this package has extra files it needs
+    for tarball in "${!PKG_EXTRAS[@]}"; do
+        local sum="${PKG_EXTRAS["${tarball}"]}";
+        ensure_file_hash "${tarball}" "${sum}"
+    done
 }
 
 function pkg_build_dir()

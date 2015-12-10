@@ -20,8 +20,34 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source "${SUBFILE}"
+# Always set PKG_NAME
+PKG_NAME="gcc"
+PKG_URL="http://ftp.gnu.org/gnu/gcc/gcc-5.2.0/gcc-5.2.0.tar.bz2"
+PKG_HASH="5f835b04b5f7dd4f4d2dc96190ec1621b8d89f2dc6f638f9f8bc1b1014ba8cad"
 
-PACKAGES=(binutils gcc)
+# Required assets during build
+declare -A PKG_EXTRAS=(
+    ["http://ftp.gnu.org/gnu/mpc/mpc-1.0.1.tar.gz"]="ed5a815cfea525dc778df0cb37468b9c1b554aaf30d9328b1431ca705b7400ff"
+    ["http://ftp.gnu.org/gnu/mpfr/mpfr-3.1.2.tar.xz"]="399d0f47ef6608cc01d29ed1b99c7faff36d9994c45f36f41ba250147100453b"
+    ["http://ftp.gnu.org/gnu/gmp/gmp-5.1.2.tar.xz"]="c7d943a6eceb4f0d3d3ab1176aec37853831cdfa281e012f8a344ba3ceefcbc2"
+)
 
-build_all
+source "${FUNCTIONSFILE}"
+
+pkg_setup()
+{
+    echo "Not yet done"
+}
+
+pkg_build()
+{
+    echo "Not yet done"
+}
+
+pkg_install()
+{
+    echo "Not yet done"
+}
+
+# Now handle the arguments
+handle_args $*
