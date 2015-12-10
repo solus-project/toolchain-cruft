@@ -20,38 +20,26 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-export TOOLCHAIN="x86_64-solus-linux"
-export TOOLCHAIN32="i686-solus-linux"
-export WORKDIRBASE="`realpath ./BUILD/`"
-export FUNCTIONSFILE="`realpath ./common.sh`"
-export SUBFILE="`realpath ./sub_common.sh`"
-export STAGEFILE="`realpath ./stage_common.sh`"
-export SOURCESDIR="`realpath ./sources`"
-export PROFILEDIR="`realpath ./profiles`"
-
-# Hard coded until we add a config file.
-export BUILD_PROFILE="native64_emul32"
-
-function do_fatal()
+function execute_stage()
 {
-    echo "$*"
-    exit 1
+    local stage="$1"
+
+    export STAGE="stage${stage}"
+    export WORKDIR="${WORKDIRBASE}/${STAGE}"
+    pushd "${STAGE}" > /dev/null 2>/dev/null || exit 1
+    ./sub.sh
+    popd >/dev/null 2>/dev/null
 }
 
-# Construct support directories
-if [[ ! -d "${SOURCESDIR}" ]]; then
-    mkdir -p "${SOURCESDIR}" || do_fatal "Cannot create sources directory"
-fi
-if [[ ! -d "${WORKDIRBASE}" ]]; then
-    mkdir -p "${WORKDIRBASE}" || do_fatal "Cannot create work base directory"
-fi
+function execute_stages()
+{
+    if [[ -z "${STAGES}" ]]; then
+        echo "Stages not set. Aborting"
+        exit 1
+    fi
 
-profile_file="${PROFILEDIR}/${BUILD_PROFILE}/profile.sh"
-if [[ ! -x "${profile_file}" ]]; then
-    do_fatal "Cannot execute profile ${BUILD_PROFILE}"
-fi
-
-
-pushd "${PROFILEDIR}/${BUILD_PROFILE}" >/dev/null || do_fatal "Cannot change to build profile dir"
-eval "${profile_file}" || do_fatal "Profile build failed for ${BUILD_PROFILE}"
-popd >/dev/null
+    for stage in "${STAGES[@]}" ; do
+        echo "Building stage: ${stage}"
+        execute_stage "${stage}"
+    done
+}
