@@ -176,7 +176,7 @@ function pkg_build()
 
 function pkg_make()
 {
-    (set -x ; eval "make ${MAKE_CONCURRENCY}" || do_fatal "Failed to build ${PKG_NAME}")
+    (set -x ; eval "make ${MAKE_CONCURRENCY} $*" || do_fatal "Failed to build ${PKG_NAME}")
 }
 
 function make_install()

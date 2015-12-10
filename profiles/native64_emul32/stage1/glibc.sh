@@ -42,12 +42,14 @@ CONFIGURE_OPTIONS32="${CONFIGURE_OPTIONS} \
                      ${CONFIGURE_COMMON} \
                      --host=${XTOOLCHAIN32} \
                      --build=${TOOLCHAIN} \
+                     --libdir=/usr/lib32 \
                      CC=\"${XTOOLCHAIN}-gcc -m32\" \
                      CXX=\"${XTOOLCHAIN}-g++ -m32\" "
 CONFIGURE_OPTIONS64="${CONFIGURE_OPTIONS} \
                      ${CONFIGURE_COMMON} \
                      --host=${XTOOLCHAIN} \
                      --build=${TOOLCHAIN} \
+                     --libdir=/usr/lib64 \
                      CC=\"${XTOOLCHAIN}-gcc -m64\" \
                      CXX=\"${XTOOLCHAIN}-g++ -m64\" "
                      
@@ -72,13 +74,13 @@ pkg_setup()
 
     # Configure 32-bit
     pushd b32 || do_fatal "could not change to b32"
-    echo "slibdir=/usr/lib32" > configparams
+    echo "slibdir=/usr/lib32" > configparms
     CONFIGURE_OPTIONS="${CONFIGURE_OPTIONS32}" pkg_configure_no_cd || do_fatal "Could not configure glibc 32-bit"
     popd
 
     # Now 64-bit
     pushd b64 > /dev/null || do_fatal "could not change to b64"
-    echo "slibdir=/usr/lib64" > configparams
+    echo "slibdir=/usr/lib64" > configparms
     CONFIGURE_OPTIONS="${CONFIGURE_OPTIONS64}" pkg_configure_no_cd || do_fatal "Could not configure glibc 64-bit"
     popd > /dev/null
 
@@ -102,11 +104,25 @@ pkg_build()
 
 
     popd >/dev/null
-    }
+}
 
 pkg_install()
 {
-    echo "Not yet implemented"
+    local builddir=`pkg_build_dir`
+    pushd "${builddir}" >/dev/null || do_fatal "Could not change to builddir"
+
+    # Install 32-bit glibc
+    pushd b32 || do_fatal "could not change to b32"
+    pkg_make install || do_fatal "Could not install 32-bit glibc"
+    popd >/dev/null
+
+    # Install 64-bit glibc
+    pushd b64 || do_fatal "could not change to b64"
+    pkg_make install || do_fatal "Could not install 64-bit glibc"
+    popd >/dev/null
+
+
+    popd >/dev/null
 }
 
 # Now handle the arguments
