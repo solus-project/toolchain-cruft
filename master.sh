@@ -30,14 +30,15 @@ export BUILD_PROFILE
 
 
 # Required directories
-export WORKDIRBASE="`realpath ./BUILD/`"
 export FUNCTIONSFILE="`realpath ./common.sh`"
 export SUBFILE="`realpath ./sub_common.sh`"
 export STAGEFILE="`realpath ./stage_common.sh`"
-export SOURCESDIR="`realpath ./sources`"
 export PROFILEDIR="`realpath ./profiles`"
 export PATCHESDIR="`realpath ./patches`"
 
+PKG_INSTALL_DIR="install"
+SOURCESDIR="sources"
+WORKDIRBASE="BUILD"
 
 function do_fatal()
 {
@@ -49,9 +50,17 @@ function do_fatal()
 if [[ ! -d "${SOURCESDIR}" ]]; then
     mkdir -p "${SOURCESDIR}" || do_fatal "Cannot create sources directory"
 fi
+export SOURCESDIR="$(realpath ${SOURCESDIR})"
+
 if [[ ! -d "${WORKDIRBASE}" ]]; then
     mkdir -p "${WORKDIRBASE}" || do_fatal "Cannot create work base directory"
 fi
+export WORKDIRBASE="$(realpath ${WORKDIRBASE}/)"
+
+if [[ ! -d "${PKG_INSTALL_DIR}" ]]; then
+    mkdir -p "${PKG_INSTALL_DIR}" || do_fatal "Cannot create install directory"
+fi
+export PKG_INSTALL_DIR="$(realpath ${PKG_INSTALL_DIR}/)"
 
 profile_file="${PROFILEDIR}/${BUILD_PROFILE}/profile.sh"
 if [[ ! -x "${profile_file}" ]]; then
