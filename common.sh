@@ -109,10 +109,3 @@ function handle_args()
 }
 
 sanity_check
-
-echo "Setting Workdir is ${WORKDIR}"
-if [[ ! -d "${WORKDIR}" ]]; then
-    mkdir -p "${WORKDIR}" || do_fatal "Cannot create required work directory"
-fi
-
-pushd "${WORKDIR}" >/dev/null || do_fatal "Cannot change to work directory"

@@ -27,6 +27,12 @@ export FUNCTIONSFILE="`realpath ./common.sh`"
 export SUBFILE="`realpath ./sub_common.sh`"
 export SOURCESDIR="`realpath ./sources`"
 
+function do_fatal()
+{
+    echo "$*"
+    exit 1
+}
+
 function execute_stage()
 {
     local stage="$1"
@@ -38,6 +44,14 @@ function execute_stage()
     ./sub.sh
     popd >/dev/null 2>/dev/null
 }
+
+# Construct support directories
+if [[ ! -d "${SOURCESDIR}" ]]; then
+    mkdir -p "${SOURCESDIR}" || do_fatal "Cannot create sources directory"
+fi
+if [[ ! -d "${WORKDIRBASE}" ]]; then
+    mkdir -p "${WORKDIRBASE}" || do_fatal "Cannot create work base directory"
+fi
 
 STAGES=(1)
 
