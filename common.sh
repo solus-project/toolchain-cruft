@@ -20,6 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+# Default configuration options
+CONFIGURE_OPTIONS="--prefix=/usr"
+
 # Perform some sanity checks or bail immediately
 function sanity_check()
 {
@@ -69,18 +72,70 @@ function pkg_fetch()
     fi
 }
 
+function pkg_build_dir()
+{
+    echo "${WORKDIR}/${PKG_NAME}-build"
+}
+
+function pkg_source_dir()
+{
+    local filename="$(basename ${PKG_URL})"
+    local name="${filename%.*}"
+    local name="$(echo ${filename} | sed 's/\.tar\..*//')"
+    echo "${WORKDIR}/${name}"
+}
+
+function pkg_tarball()
+{
+    echo "${SOURCESDIR}/$(basename ${PKG_URL})"
+}
+
+function check_prereqs()
+{
+    # Default behaviour, extract tarball
+    pkg_dir=`pkg_source_dir`
+    build_dir=`pkg_build_dir`
+
+
+    if [[ ! -d "${build_dir}" ]]; then
+        mkdir -p "${build_dir}" || do_fatal "Cannot create ${build_dir}"
+    fi
+}
+
 function pkg_setup()
 {
-    echo "Setup: Nothing to be done for ${PKG_NAME}"
+    check_prereqs
+
+    local pkg_dir=`pkg_source_dir`
+    local build_dir=`pkg_build_dir`
+    local tarball=`pkg_tarball`
+
+    # Extract tarball if needed
+    if [[ ! -d "${pkg_dir}" ]]; then
+        pushd "${WORKDIR}" >/dev/null || do_fatal "Cannot cd to workdir"
+        echo "Extracting source for ${PKG_NAME}"
+        tar xf "${tarball}" || do_fatal "Could not decompress tarball"
+        popd > /dev/null
+        mkdir -p "${pkg_dir}" || do_fatal "Cannot create ${pkg_dir}"
+    fi
+    
+    pushd "${build_dir}" >/dev/null || do_fatal "Unable to use build directory"
+
+    # TODO: Configure
+    (set -x ; eval "${pkg_dir}/configure ${CONFIGURE_OPTIONS}" || do_fatal "Failed to configure ${PKG_NAME}")
+    
+    popd >/dev/null
 }
 
 function pkg_build()
 {
+    check_prereqs
     echo "Build: Nothing to be done for ${PKG_NAME}"
 }
 
 function pkg_install()
 {
+    check_prereqs
     echo "Install: Nothing to be done for ${PKG_NAME}"
 }
 

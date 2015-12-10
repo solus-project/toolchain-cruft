@@ -28,11 +28,11 @@ PKG_HASH="b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22"
 source "${FUNCTIONSFILE}"
 
 # Define overrides
-
-pkg_setup()
-{
-    echo "Setting up binutils"
-}
+CONFIGURE_OPTIONS+="--with-lib-path=/usr/lib64:/usr/lib:/lib:/lib64:/usr/lib32:/lib32 \
+                    --disable-nls \
+                    --disable-werror \
+                    --disable-gold \
+                    --enable-64-bit-bfd"
 
 # Now handle the arguments
 handle_args $*
