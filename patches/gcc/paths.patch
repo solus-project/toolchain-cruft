@@ -1,0 +1,46 @@
+diff --git a/gcc/config/i386/linux.h b/gcc/config/i386/linux.h
+index a100963..a8e15f5 100644
+--- a/gcc/config/i386/linux.h
++++ b/gcc/config/i386/linux.h
+@@ -20,4 +20,9 @@ along with GCC; see the file COPYING3.  If not see
+ <http://www.gnu.org/licenses/>.  */
+ 
+ #define GNU_USER_LINK_EMULATION "elf_i386"
+-#define GLIBC_DYNAMIC_LINKER "/lib/ld-linux.so.2"
++#define GLIBC_DYNAMIC_LINKER "##INSTALL_PREFIX##/usr/lib/ld-linux.so.2"
++
++#undef STANDARD_STARTFILE_PREFIX_1
++#undef STANDARD_STARTFILE_PREFIX_2
++#define STANDARD_STARTFILE_PREFIX_1 "##INSTALL_PREFIX##/usr/lib/"
++#define STANDARD_STARTFILE_PREFIX_2 ""
+diff --git a/gcc/config/i386/linux64.h b/gcc/config/i386/linux64.h
+index a27d3be..f9a1c4c 100644
+--- a/gcc/config/i386/linux64.h
++++ b/gcc/config/i386/linux64.h
+@@ -27,6 +27,11 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+ #define GNU_USER_LINK_EMULATION64 "elf_x86_64"
+ #define GNU_USER_LINK_EMULATIONX32 "elf32_x86_64"
+ 
+-#define GLIBC_DYNAMIC_LINKER32 "/lib/ld-linux.so.2"
+-#define GLIBC_DYNAMIC_LINKER64 "/lib64/ld-linux-x86-64.so.2"
+-#define GLIBC_DYNAMIC_LINKERX32 "/libx32/ld-linux-x32.so.2"
++#define GLIBC_DYNAMIC_LINKER32 "##INSTALL_PREFIX##/usr/lib/ld-linux.so.2"
++#define GLIBC_DYNAMIC_LINKER64 "##INSTALL_PREFIX##/usr/lib64/ld-linux-x86-64.so.2"
++#define GLIBC_DYNAMIC_LINKERX32 "##INSTALL_PREFIX##/usr/libx32/ld-linux-x32.so.2"
++
++#undef STANDARD_STARTFILE_PREFIX_1
++#undef STANDARD_STARTFILE_PREFIX_2
++#define STANDARD_STARTFILE_PREFIX_1 "##INSTALL_PREFIX##/usr/lib64/"
++#define STANDARD_STARTFILE_PREFIX_2 ""
+diff --git a/gcc/config/i386/t-linux64 b/gcc/config/i386/t-linux64
+index f6dbb78..d7903c0 100644
+--- a/gcc/config/i386/t-linux64
++++ b/gcc/config/i386/t-linux64
+@@ -33,6 +33,4 @@
+ comma=,
+ MULTILIB_OPTIONS    = $(subst $(comma),/,$(TM_MULTILIB_CONFIG))
+ MULTILIB_DIRNAMES   = $(patsubst m%, %, $(subst /, ,$(MULTILIB_OPTIONS)))
+-MULTILIB_OSDIRNAMES = m64=../lib64$(call if_multiarch,:x86_64-linux-gnu)
+-MULTILIB_OSDIRNAMES+= m32=$(if $(wildcard $(shell echo $(SYSTEM_HEADER_DIR))/../../usr/lib32),../lib32,../lib)$(call if_multiarch,:i386-linux-gnu)
+-MULTILIB_OSDIRNAMES+= mx32=../libx32$(call if_multiarch,:x86_64-linux-gnux32)
++MULTILIB_OSDIRNAMES = m64=../lib64 m32=../lib32 mx32=../libx3
