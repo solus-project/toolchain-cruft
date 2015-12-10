@@ -92,7 +92,6 @@ pkg_build()
 
     # Build 32-bit glibc
     pushd b32 || do_fatal "could not change to b32"
-    ls -1
     pkg_make
     popd >/dev/null
 
