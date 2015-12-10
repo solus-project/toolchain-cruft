@@ -35,5 +35,10 @@ CONFIGURE_OPTIONS+="--with-lib-path=/usr/lib64:/usr/lib:/lib:/lib64:/usr/lib32:/
                     --target=${XTOOLCHAIN} \
                     --enable-64-bit-bfd"
 
+pkg_install()
+{
+    make_install "tooldir=/usr"
+}
+
 # Now handle the arguments
 handle_args $*
