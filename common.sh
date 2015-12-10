@@ -119,7 +119,8 @@ function check_prereqs()
     fi
 }
 
-function pkg_setup()
+# Default extract routine
+function pkg_extract()
 {
     check_prereqs
 
@@ -135,13 +136,28 @@ function pkg_setup()
         popd > /dev/null
         mkdir -p "${pkg_dir}" || do_fatal "Cannot create ${pkg_dir}"
     fi
-    
+}
+
+#
+# Default configure routine
+#
+function pkg_configure()
+{
+    local pkg_dir=`pkg_source_dir`
+    local build_dir=`pkg_build_dir`
+
     pushd "${build_dir}" >/dev/null || do_fatal "Unable to use build directory"
 
     # TODO: Configure
     (set -x ; eval "${pkg_dir}/configure ${CONFIGURE_OPTIONS}" || do_fatal "Failed to configure ${PKG_NAME}")
     
     popd >/dev/null
+}
+
+function pkg_setup()
+{
+    pkg_extract
+    pkg_configure
 }
 
 function pkg_build()

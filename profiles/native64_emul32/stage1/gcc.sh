@@ -36,7 +36,24 @@ source "${FUNCTIONSFILE}"
 
 pkg_setup()
 {
-    echo "Not yet done"
+    local sourcedir=`pkg_source_dir`
+
+    # Extract main package
+    pkg_extract
+
+    # Now extract our own..
+    echo "Extracting GCC extras"
+    pushd "${sourcedir}" >/dev/null || do_fatal "Could not change to source dir"
+    tar xf "${SOURCESDIR}/mpc-1.0.1.tar.gz" || do_fatal "Could not extract mpc tarball"
+    mv mpc-1.0.1 mpc
+    tar xf "${SOURCESDIR}/mpfr-3.1.2.tar.xz" || do_fatal "Could not extract mpfr tarball"
+    mv mpfr-3.1.2 mpfr
+    tar xf "${SOURCESDIR}/gmp-5.1.2.tar.xz" || do_fatal "Could not extract gmp tarball"
+    mv gmp-5.1.2 gmp
+    popd >/dev/null
+
+    # Now go back to the main configure routine
+    pkg_configure
 }
 
 pkg_build()
