@@ -22,7 +22,7 @@
 
 source "${SUBFILE}"
 
-PACKAGES=(binutils gcc linux-headers)
+PACKAGES=(binutils gcc linux-headers glibc)
 
 old_path="${PATH}"
 
