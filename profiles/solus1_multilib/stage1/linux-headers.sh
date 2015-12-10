@@ -44,11 +44,11 @@ pkg_install()
     local sourcedir=`pkg_source_dir`
     pushd "${sourcedir}" >/dev/null
     make headers_install INSTALL_HDR_PATH=./leheaders
-    if [[ ! -d "${PKG_INSTALL_DIR}/usr/include" ]]; then
-        install -d -D -m 00755 "${PKG_INSTALL_DIR}/usr/include"
+    if [[ ! -d /tools/include ]]; then
+        install -d -D -m 00755 /tools/include
     fi
 
-    cp -Rv leheaders/include/* "${PKG_INSTALL_DIR}/usr/include/."
+    cp -Rv leheaders/include/* /tools/include/.
 }
 
 # Now handle the arguments
