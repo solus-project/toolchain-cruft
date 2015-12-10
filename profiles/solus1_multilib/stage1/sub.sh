@@ -28,4 +28,16 @@ old_path="${PATH}"
 
 export PATH="${PKG_INSTALL_DIR}/bin:${PKG_INSTALL_DIR}/usr/bin:${PATH}"
 
+if [[ ! -d "${PKG_INSTALL_DIR}" ]]; then
+    mkdir -p "${PKG_INSTALL_DIR}"
+fi
+
+if [[ ! -d "${PKG_INSTALL_DIR}/usr/lib64" ]]; then
+    mkdir -p "${PKG_INSTALL_DIR}/usr/lib64"
+fi
+
+if [[ ! -e "${PKG_INSTALL_DIR}/usr/lib" ]]; then
+    ln -sv lib64 "${PKG_INSTALL_DIR}/usr/lib"
+fi
+
 build_all
