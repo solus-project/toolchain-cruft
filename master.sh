@@ -20,10 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-export TOOLCHAIN="x86_64-solus-linux"
-export XTOOLCHAIN="x86_64-bootstrap-linux"
-export TOOLCHAIN32="i686-solus-linux"
-export XTOOLCHAIN32="i686-bootstrap-linux"
+. config.sh
+
+export TOOLCHAIN
+export XTOOLCHAIN
+export TOOLCHAIN32
+export XTOOLCHAIN32
+
 export WORKDIRBASE="`realpath ./BUILD/`"
 export FUNCTIONSFILE="`realpath ./common.sh`"
 export SUBFILE="`realpath ./sub_common.sh`"
