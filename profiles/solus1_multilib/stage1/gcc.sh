@@ -39,8 +39,8 @@ CONFIGURE_OPTIONS+="--target=${XTOOLCHAIN} \
                     --with-arch32=i686 \
                     --with-newlib \
                     --with-sysroot=\"${PKG_INSTALL_DIR}\" \
-                    --with-native-system-header-dir=\"${PKG_INSTALL_DIR}/usr/include\" \
-                    --with-local-prefix=\"${PKG_INSTALL_DIR}/\" \
+                    --with-native-system-header-dir=\"${PKG_INSTALL_DIR}/include\" \
+                    --with-local-prefix=/tools/ \
                     --without-headers \
                     --disable-nls \
                     --disable-shared \
@@ -56,6 +56,29 @@ CONFIGURE_OPTIONS+="--target=${XTOOLCHAIN} \
                     --disable-libcilkrts \
                     --with-multilib-list=m32,m64 \
                     --disable-libstdc++-v3"
+
+pkg_root_mangle()
+{
+    # Credit to LFS!
+    for file in \
+     $(find gcc/config -name linux64.h -o -name linux.h -o -name sysv4.h)
+    do
+      cp -uv $file{,.orig}
+      sed -e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' \
+          -e 's@/usr@/tools@g' $file.orig > $file
+      echo '
+    #undef STANDARD_STARTFILE_PREFIX_1
+    #undef STANDARD_STARTFILE_PREFIX_2
+    #define STANDARD_STARTFILE_PREFIX_1 "/tools/lib/"
+    #define STANDARD_STARTFILE_PREFIX_2 ""' >> $file
+      touch $file.orig
+    done
+    sed -i -e 's@/libx32/ld-linux-x32.so.2@/tools/libx32/ld-linux-x32.so.2@g' gcc/config/i386/linux64.h
+    sed -i -e 's@/lib/ld-linux.so.2@/lib32/ld-linux.so.2@g' gcc/config/i386/linux64.h
+    sed -i -e '/MULTILIB_OSDIRNAMES/d' gcc/config/i386/t-linux64
+    echo "MULTILIB_OSDIRNAMES = m64=../lib m32=../lib32 mx32=../libx32" >> gcc/config/i386/t-linux64
+}
+
 pkg_setup()
 {
     local sourcedir=`pkg_source_dir`
@@ -77,21 +100,12 @@ pkg_setup()
     sed -e "s@\#\#INSTALL_PREFIX\#\#@${PKG_INSTALL_DIR}@g" "${PATCHESDIR}/gcc/paths.patch" | patch -p1 || do_fatal "Could not patch GCC"
     patch -p1 < "${PATCHESDIR}/gcc/0001-Prebuild-changes.patch" || do_fatal "Could not patch GCC"
 
+    pkg_root_mangle
+
     popd >/dev/null
 
     # Now go back to the main configure routine
     pkg_configure
-}
-
-pkg_install()
-{
-    make_install DESTDIR="${PKG_INSTALL_DIR}"
-    if [[ ! -d "${PKG_INSTALL_DIR}/lib" ]]; then
-        install -D -d -m 00755 "${PKG_INSTALL_DIR}/lib"
-    fi
-
-    ln -sv ../usr/bin/cpp "${PKG_INSTALL_DIR}/lib/cpp"
-    ln -svf gcc "${PKG_INSTALL_DIR}/usr/bin/cc"
 }
 
 # Now handle the arguments
