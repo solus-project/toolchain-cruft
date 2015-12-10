@@ -34,6 +34,24 @@ declare -A PKG_EXTRAS=(
 
 source "${FUNCTIONSFILE}"
 
+CONFIGURE_OPTIONS+="--target=${TOOLCHAIN} \
+                    --with-arch32=i686 \
+                    --enable-languages=c,c++ \
+                    --with-newlib \
+                    --without-headers \
+                    --disable-nls \
+                    --disable-shared \
+                    --disable-decimal-float \
+                    --disable-threads \
+                    --disable-libatomic \
+                    --disable-libgomp \
+                    --disable-libitm \
+                    --disable-libquadmath \
+                    --disable-libsanitizer \
+                    --disable-libssp \
+                    --disable-libvtv \
+                    --disable-libcilkrts \
+                    --disable-libstdc++-v3"
 pkg_setup()
 {
     local sourcedir=`pkg_source_dir`
@@ -54,11 +72,6 @@ pkg_setup()
 
     # Now go back to the main configure routine
     pkg_configure
-}
-
-pkg_build()
-{
-    echo "Not yet done"
 }
 
 pkg_install()
