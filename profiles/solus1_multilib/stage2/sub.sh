@@ -20,8 +20,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source "${STAGEFILE}"
+source "${SUBFILE}"
 
-STAGES=(1 2)
+PACKAGES=(libstdc++)
 
-execute_stages
+old_path="${PATH}"
+
+export PATH="/tools/bin:/tools/usr/bin:${PATH}"
+
+# We also have our own pre-requisites on the toolchain..
+export CONFIGURE_OPTIONS="--prefix=/tools "
+
+if [[ ! -d "${PKG_INSTALL_DIR}/tools" ]]; then
+    mkdir -p "${PKG_INSTALL_DIR}/tools" || do_fatal "Cannot create required tools directory"
+fi
+
+# Ensure we have a /tools/ symlink
+if [[ ! -e /tools/ ]]; then
+    sudo ln -sv "${PKG_INSTALL_DIR}/tools" /tools || do_fatal "Cannot create required /tools/ symlink"
+fi
+
+build_all
