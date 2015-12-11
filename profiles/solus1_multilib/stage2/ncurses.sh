@@ -34,6 +34,7 @@ CONFIGURE_COMMON="--prefix=/tools \
                   --enable-widec \
                   --enable-symlinks \
                   --disable-rpath \
+                  --disable-static \
                   --enable-overwrite"
 
 CONFIGURE_OPTIONS32="${CONFIGURE_COMMON} \
