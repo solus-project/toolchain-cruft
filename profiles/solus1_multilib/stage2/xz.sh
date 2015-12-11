@@ -20,24 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source "${SUBFILE}"
+# Always set PKG_NAME
+PKG_NAME="xz"
+PKG_URL="http://tukaani.org/xz/xz-5.0.5.tar.gz"
+PKG_HASH="5dcffe6a3726d23d1711a65288de2e215b4960da5092248ce63c99d50093b93a"
 
-PACKAGES=(libstdc++ binutils gcc ncurses bash coreutils util-linux grep sed tar bzip2 gzip xz)
+CONFIGURE_OPTIONS+="CFLAGS=\"${CFLAGS} -D_FILE_OFFSET_BITS=64\""
+source "${FUNCTIONSFILE}"
 
-old_path="${PATH}"
-
-export PATH="/tools/bin:/tools/usr/bin:${PATH}"
-
-# We also have our own pre-requisites on the toolchain..
-export CONFIGURE_OPTIONS="--prefix=/tools "
-
-if [[ ! -d "${PKG_INSTALL_DIR}/tools" ]]; then
-    mkdir -p "${PKG_INSTALL_DIR}/tools" || do_fatal "Cannot create required tools directory"
-fi
-
-# Ensure we have a /tools/ symlink
-if [[ ! -e /tools/ ]]; then
-    sudo ln -sv "${PKG_INSTALL_DIR}/tools" /tools || do_fatal "Cannot create required /tools/ symlink"
-fi
-
-build_all
+# Now handle the arguments
+handle_args $*
