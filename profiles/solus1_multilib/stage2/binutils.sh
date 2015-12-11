@@ -27,7 +27,7 @@ PKG_HASH="b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22"
 
 source "${FUNCTIONSFILE}"
 
-OUR_LIB_DIRS="/tools/lib:/tools/lib32"
+OUR_LIB_DIRS="/tools/lib"
 
 # Define overrides
 CONFIGURE_OPTIONS+="--with-lib-path=${SYSTEM_LIB_DIRS} \

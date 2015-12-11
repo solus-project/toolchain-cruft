@@ -37,10 +37,10 @@ source "${FUNCTIONSFILE}"
 CONFIGURE_OPTIONS+="--enable-languages=c,c++ \
                     --with-arch32=i686 \
                     --with-local-prefix=/tools \
-                    --disable-bootstrap \
                     --with-native-system-header-dir=\"/tools/include\" \
                     --disable-libstdcxx-pch \
                     --disable-libgomp \
+                    --disable-bootstrap \
                     --with-multilib-list=m32,m64"
 
 pkg_root_mangle()
@@ -90,7 +90,7 @@ pkg_setup()
     popd >/dev/null
 
     # Now go back to the main configure routine
-    pkg_configure CC="${XTOOLCHAIN}-gcc" CXX="${XTOOLCHAIN}-g++" AR="${XTOOLCHAIN}-ar" RANLIB="${XTOOLCHAIN}-ranlib"
+    pkg_configure AR="${XTOOLCHAIN}-ar" RANLIB="${XTOOLCHAIN}-ranlib" CC="${XTOOLCHAIN}-gcc" CXX="${XTOOLCHAIN}-c++"
 }
 
 # Now handle the arguments

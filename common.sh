@@ -130,14 +130,15 @@ function pkg_extract()
     local build_dir=`pkg_build_dir`
     local tarball=`pkg_tarball`
 
-    # Extract tarball if needed
-    if [[ ! -d "${pkg_dir}" ]]; then
-        pushd "${WORKDIR}" >/dev/null || do_fatal "Cannot cd to workdir"
-        echo "Extracting source for ${PKG_NAME}"
-        tar xf "${tarball}" || do_fatal "Could not decompress tarball"
-        popd > /dev/null
-        mkdir -p "${pkg_dir}" || do_fatal "Cannot create ${pkg_dir}"
+    if [[ -d "${pkg_dir}" ]]; then
+        rm -rf "${pkg_dir}"
     fi
+
+    pushd "${WORKDIR}" >/dev/null || do_fatal "Cannot cd to workdir"
+    echo "Extracting source for ${PKG_NAME}"
+    tar xf "${tarball}" || do_fatal "Could not decompress tarball"
+    popd > /dev/null
+    mkdir -p "${pkg_dir}" || do_fatal "Cannot create ${pkg_dir}"
 }
 
 #
@@ -157,7 +158,7 @@ function pkg_configure()
 
 function pkg_configure_no_cd()
 {
-    (set -x ; eval "${pkg_dir}/configure ${CONFIGURE_OPTIONS}" || do_fatal "Failed to configure ${PKG_NAME}")
+    (set -x ; eval "$(pkg_source_dir)/configure ${CONFIGURE_OPTIONS}" || do_fatal "Failed to configure ${PKG_NAME}")
 }
 
 function pkg_setup()
