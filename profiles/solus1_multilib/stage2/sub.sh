@@ -22,7 +22,7 @@
 
 source "${SUBFILE}"
 
-PACKAGES=(libstdc++ binutils gcc)
+PACKAGES=(libstdc++ binutils gcc ncurses)
 
 old_path="${PATH}"
 
