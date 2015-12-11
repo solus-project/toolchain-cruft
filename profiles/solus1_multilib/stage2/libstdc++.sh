@@ -28,7 +28,6 @@ PKG_HASH="5f835b04b5f7dd4f4d2dc96190ec1621b8d89f2dc6f638f9f8bc1b1014ba8cad"
 source "${FUNCTIONSFILE}"
 
 CONFIGURE_COMMON="--prefix=/tools \
-                  --disable-shared \
                   --disable-nls \
                   --disable-multilib \
                   --disable-libstdcxx-pch \
