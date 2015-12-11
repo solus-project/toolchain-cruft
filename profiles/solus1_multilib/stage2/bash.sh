@@ -20,24 +20,39 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source "${SUBFILE}"
+# Always set PKG_NAME
+PKG_NAME="bash"
+PKG_URL="https://ftp.gnu.org/gnu/bash/bash-4.3.30.tar.gz"
+PKG_HASH="317881019bbf2262fb814b7dd8e40632d13c3608d2f237800a8828fbb8a640dd"
 
-PACKAGES=(libstdc++ binutils gcc ncurses bash)
+source "${FUNCTIONSFILE}"
 
-old_path="${PATH}"
+pkg_setup()
+{
+    set -e
+    pkg_extract
 
-export PATH="/tools/bin:/tools/usr/bin:${PATH}"
+    pushd $(pkg_source_dir) >/dev/null
 
-# We also have our own pre-requisites on the toolchain..
-export CONFIGURE_OPTIONS="--prefix=/tools "
+    # need all these sadly. CVEs n whatnot.
+    PATCH_START=031
+    PATCH_END=042
+    for i in $(seq -f "%03g" $PATCH_START $PATCH_END)
+    do
+        zcat "${PATCHESDIR}/bash/bash43-$i.gz" | patch -p0
+    done
 
-if [[ ! -d "${PKG_INSTALL_DIR}/tools" ]]; then
-    mkdir -p "${PKG_INSTALL_DIR}/tools" || do_fatal "Cannot create required tools directory"
-fi
+    pkg_configure
 
-# Ensure we have a /tools/ symlink
-if [[ ! -e /tools/ ]]; then
-    sudo ln -sv "${PKG_INSTALL_DIR}/tools" /tools || do_fatal "Cannot create required /tools/ symlink"
-fi
+    popd >/dev/null
+}
 
-build_all
+pkg_install()
+{
+    pkg_make install
+
+    ln -sv bash /tools/bin/sh
+}
+
+# Now handle the arguments
+handle_args $*
