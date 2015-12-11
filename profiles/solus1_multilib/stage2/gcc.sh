@@ -68,6 +68,7 @@ pkg_root_mangle()
 pkg_setup()
 {
     local sourcedir=`pkg_source_dir`
+    local builddir=`pkg_build_dir`
 
     # Extract main package
     pkg_extract
@@ -89,8 +90,10 @@ pkg_setup()
 
     popd >/dev/null
 
+    pushd "${builddir}" > /dev/null || do_fatal "Cannot cd to build dir"
     # Now go back to the main configure routine
-    pkg_configure AR="${XTOOLCHAIN}-ar" RANLIB="${XTOOLCHAIN}-ranlib" CC="${XTOOLCHAIN}-gcc" CXX="${XTOOLCHAIN}-c++"
+    eval CXX="${XTOOLCHAIN}-c++" CC="${XTOOLCHAIN}-gcc" AR="${XTOOLCHAIN}-ar" RANLIB="${XTOOLCHAIN}-ranlib" "$(pkg_source_dir)/configure" $CONFIGURE_OPTIONS
+    popd >/dev/null
 }
 
 # Now handle the arguments
