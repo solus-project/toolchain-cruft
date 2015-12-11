@@ -20,25 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source "${SUBFILE}"
+# Always set PKG_NAME
+PKG_NAME="findutils"
+PKG_URL="http://ftp.gnu.org/pub/gnu/findutils/findutils-4.4.2.tar.gz"
+PKG_HASH="434f32d171cbc0a5e72cfc5372c6fc4cb0e681f8dce566a0de5b6fccd702b62a"
 
-PACKAGES=(libstdc++ binutils gcc ncurses bash coreutils util-linux grep
-          sed tar bzip2 gzip xz diffutils patch file findutils)
+source "${FUNCTIONSFILE}"
 
-old_path="${PATH}"
-
-export PATH="/tools/bin:/tools/usr/bin:${PATH}"
-
-# We also have our own pre-requisites on the toolchain..
-export CONFIGURE_OPTIONS="--prefix=/tools "
-
-if [[ ! -d "${PKG_INSTALL_DIR}/tools" ]]; then
-    mkdir -p "${PKG_INSTALL_DIR}/tools" || do_fatal "Cannot create required tools directory"
-fi
-
-# Ensure we have a /tools/ symlink
-if [[ ! -e /tools/ ]]; then
-    sudo ln -sv "${PKG_INSTALL_DIR}/tools" /tools || do_fatal "Cannot create required /tools/ symlink"
-fi
-
-build_all
+# Now handle the arguments
+handle_args $*
