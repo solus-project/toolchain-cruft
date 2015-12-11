@@ -20,26 +20,26 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source "${SUBFILE}"
+# Always set PKG_NAME
+PKG_NAME="make"
+PKG_URL="http://ftp.gnu.org/gnu/make/make-4.1.tar.gz"
+PKG_HASH="9fc7a9783d3d2ea002aa1348f851875a2636116c433677453cc1d1acc3fc4d55"
 
-PACKAGES=(libstdc++ binutils gcc ncurses bash coreutils util-linux grep
-          sed tar bzip2 gzip xz diffutils patch file findutils gawk gettext
-          m4 make)
+source "${FUNCTIONSFILE}"
 
-old_path="${PATH}"
+CONFIGURE_OPTIONS+="--without-guile"
 
-export PATH="/tools/bin:/tools/usr/bin:${PATH}"
+pkg_setup()
+{
+    set -e
+    pkg_extract
 
-# We also have our own pre-requisites on the toolchain..
-export CONFIGURE_OPTIONS="--prefix=/tools "
+    pushd "$(pkg_source_dir)" >/dev/null
+    patch -p1 < "${PATCHESDIR}/make/bug43434.patch"
+    popd >/dev/null
 
-if [[ ! -d "${PKG_INSTALL_DIR}/tools" ]]; then
-    mkdir -p "${PKG_INSTALL_DIR}/tools" || do_fatal "Cannot create required tools directory"
-fi
+    pkg_configure
+}
 
-# Ensure we have a /tools/ symlink
-if [[ ! -e /tools/ ]]; then
-    sudo ln -sv "${PKG_INSTALL_DIR}/tools" /tools || do_fatal "Cannot create required /tools/ symlink"
-fi
-
-build_all
+# Now handle the arguments
+handle_args $*
