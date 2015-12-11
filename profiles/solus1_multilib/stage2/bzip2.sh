@@ -20,24 +20,33 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source "${SUBFILE}"
+# Always set PKG_NAME
+PKG_NAME="bzip2"
+PKG_URL="http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz"
+PKG_HASH="a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd"
 
-PACKAGES=(libstdc++ binutils gcc ncurses bash coreutils util-linux grep sed tar bzip2)
+source "${FUNCTIONSFILE}"
 
-old_path="${PATH}"
+pkg_setup()
+{
+    set -e
+    pkg_extract
+}
 
-export PATH="/tools/bin:/tools/usr/bin:${PATH}"
+pkg_build()
+{
+    set -e
+    pushd $(pkg_source_dir)
+    pkg_make
+}
 
-# We also have our own pre-requisites on the toolchain..
-export CONFIGURE_OPTIONS="--prefix=/tools "
+pkg_install()
+{
+    set -e
+    pushd $(pkg_source_dir)
 
-if [[ ! -d "${PKG_INSTALL_DIR}/tools" ]]; then
-    mkdir -p "${PKG_INSTALL_DIR}/tools" || do_fatal "Cannot create required tools directory"
-fi
+    pkg_make install PREFIX=/tools
+}
 
-# Ensure we have a /tools/ symlink
-if [[ ! -e /tools/ ]]; then
-    sudo ln -sv "${PKG_INSTALL_DIR}/tools" /tools || do_fatal "Cannot create required /tools/ symlink"
-fi
-
-build_all
+# Now handle the arguments
+handle_args $*
