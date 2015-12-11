@@ -20,24 +20,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source "${SUBFILE}"
+# Always set PKG_NAME
+PKG_NAME="binutils"
+PKG_URL="http://ftp.gnu.org/gnu/binutils/binutils-2.25.1.tar.bz2"
+PKG_HASH="b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22"
 
-PACKAGES=(libstdc++ binutils)
+source "${FUNCTIONSFILE}"
 
-old_path="${PATH}"
+OUR_LIB_DIRS="/tools/lib:/tools/lib32"
 
-export PATH="/tools/bin:/tools/usr/bin:${PATH}"
+# Define overrides
+CONFIGURE_OPTIONS+="--with-lib-path=${SYSTEM_LIB_DIRS} \
+                    --disable-nls \
+                    --disable-werror \
+                    --disable-gold \
+                    --with-sysroot \
+                    --enable-64-bit-bfd"
 
-# We also have our own pre-requisites on the toolchain..
-export CONFIGURE_OPTIONS="--prefix=/tools "
+pkg_setup()
+{
+    pkg_extract
+    pkg_configure CC="${XTOOLCHAIN}-gcc" AR="${XTOOLCHAIN}-ar" RANLIB="${XTOOLCHAIN}-ranlib"
+}
 
-if [[ ! -d "${PKG_INSTALL_DIR}/tools" ]]; then
-    mkdir -p "${PKG_INSTALL_DIR}/tools" || do_fatal "Cannot create required tools directory"
-fi
+pkg_install()
+{
+    make_install
+    pkg_make -C ld clean
+    pkg_make -C ld LIB_PATH="${OUR_LIB_DIRS}"
+    cp -v "$(pkg_build_dir)/ld/ld-new" /tools/bin
+}
 
-# Ensure we have a /tools/ symlink
-if [[ ! -e /tools/ ]]; then
-    sudo ln -sv "${PKG_INSTALL_DIR}/tools" /tools || do_fatal "Cannot create required /tools/ symlink"
-fi
-
-build_all
+# Now handle the arguments
+handle_args $*
