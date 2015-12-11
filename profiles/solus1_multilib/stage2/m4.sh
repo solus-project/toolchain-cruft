@@ -20,26 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source "${SUBFILE}"
+# Always set PKG_NAME
+PKG_NAME="m4"
+PKG_URL="http://ftp.gnu.org/gnu/m4/m4-1.4.17.tar.xz"
+PKG_HASH="f0543c3beb51fa6b3337d8025331591e0e18d8ec2886ed391f1aade43477d508"
 
-PACKAGES=(libstdc++ binutils gcc ncurses bash coreutils util-linux grep
-          sed tar bzip2 gzip xz diffutils patch file findutils gawk gettext
-          m4)
+source "${FUNCTIONSFILE}"
 
-old_path="${PATH}"
-
-export PATH="/tools/bin:/tools/usr/bin:${PATH}"
-
-# We also have our own pre-requisites on the toolchain..
-export CONFIGURE_OPTIONS="--prefix=/tools "
-
-if [[ ! -d "${PKG_INSTALL_DIR}/tools" ]]; then
-    mkdir -p "${PKG_INSTALL_DIR}/tools" || do_fatal "Cannot create required tools directory"
-fi
-
-# Ensure we have a /tools/ symlink
-if [[ ! -e /tools/ ]]; then
-    sudo ln -sv "${PKG_INSTALL_DIR}/tools" /tools || do_fatal "Cannot create required /tools/ symlink"
-fi
-
-build_all
+# Now handle the arguments
+handle_args $*

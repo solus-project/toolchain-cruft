@@ -20,26 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source "${SUBFILE}"
+# Always set PKG_NAME
+PKG_NAME="gettext"
+PKG_URL="http://ftp.gnu.org/gnu/gettext/gettext-0.18.2.tar.gz"
+PKG_HASH="516a6370b3b3f46e2fc5a5e222ff5ecd76f3089bc956a7587a6e4f89de17714c"
 
-PACKAGES=(libstdc++ binutils gcc ncurses bash coreutils util-linux grep
-          sed tar bzip2 gzip xz diffutils patch file findutils gawk gettext
-          m4)
+source "${FUNCTIONSFILE}"
 
-old_path="${PATH}"
+CONFIGURE_OPTIONS+="--disable-static --enable-shared"
 
-export PATH="/tools/bin:/tools/usr/bin:${PATH}"
-
-# We also have our own pre-requisites on the toolchain..
-export CONFIGURE_OPTIONS="--prefix=/tools "
-
-if [[ ! -d "${PKG_INSTALL_DIR}/tools" ]]; then
-    mkdir -p "${PKG_INSTALL_DIR}/tools" || do_fatal "Cannot create required tools directory"
-fi
-
-# Ensure we have a /tools/ symlink
-if [[ ! -e /tools/ ]]; then
-    sudo ln -sv "${PKG_INSTALL_DIR}/tools" /tools || do_fatal "Cannot create required /tools/ symlink"
-fi
-
-build_all
+# Now handle the arguments
+handle_args $*
