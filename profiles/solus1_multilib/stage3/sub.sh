@@ -26,19 +26,23 @@ source "${SUBFILE}"
 
 TOOLCHAIN_ASSETS=(common.sh config.sh master.sh stage_common.sh sub_common.sh)
 
-CHROOT_STAGE_DIR="/tools/buildsys/profiles/${BUILD_PROFILE}/${STAGE}"
-CHROOT_PROFILE_DIR="/tools/buildsys/profiles/${BUILD_PROFILE}"
+CHROOT_PREFIX="${PKG_INSTALL_DIR}/buildsys" # /buildsys
+
+CHROOT_STAGE_DIR="${CHROOT_PREFIX}/profiles/${BUILD_PROFILE}/${STAGE}"
+CHROOT_PROFILE_DIR="${CHROOT_PREFIX}/profiles/${BUILD_PROFILE}"
+CHROOT_SOURCES_DIR="${CHROOT_PREFIX}/sources" # /buildsys/sources
+CHROOT_PATCHES_DIR="${CHROOT_PREFIX}/patches" # /buildsys/patches
 
 # Copy our own system into the chroot for further usage.
 copy_chroot_system()
 {
-    if [[ ! -d /tools/buildsys ]]; then
+    if [[ ! -d ${CHROOT_PREFIX} ]]; then
         echo "Copying chroot system across"
-        sudo mkdir -p /tools/buildsys || do_fatal "Unable to create dir"
+        sudo mkdir -p ${CHROOT_PREFIX} || do_fatal "Unable to create dir"
     fi
     # Update the chroot assets
     for asset in "${TOOLCHAIN_ASSETS[@]}" ; do
-        sudo cp -v "${SYSTEM_BASE_DIR}/${asset}" "/tools/buildsys/${asset}" || do_fatal "Could not copy required asset: ${asset}"
+        sudo cp -v "${SYSTEM_BASE_DIR}/${asset}" "${CHROOT_PREFIX}/${asset}" || do_fatal "Could not copy required asset: ${asset}"
     done
 
     # new stage dir.
@@ -60,6 +64,38 @@ execute_stages
 EOF
 }
 
+up_chroot()
+{
+    echo "Mounting sources/patches binds"
+    if [[ ! -d "${CHROOT_SOURCES_DIR}" ]]; then
+        sudo mkdir -p "${CHROOT_SOURCES_DIR}" || do_fatal "Cannot make sources directory"
+    fi
+    if [[ ! -d "${CHROOT_PATCHES_DIR}" ]]; then
+        sudo mkdir -p "${CHROOT_PATCHES_DIR}" || do_fatal "Cannot make patches directory"
+    fi
+    sudo mount --bind "${SOURCESDIR}" "${CHROOT_SOURCES_DIR}" || do_fatal "Cannot bind-mount sources"
+    export BUILD_SYS_HAVE_MOUNT="1"
+    sudo mount --bind "${PATCHESDIR}" "${CHROOT_PATCHES_DIR}" || do_fatal "Cannot bind-mount patches"
+}
+
+down_chroot()
+{
+    sync
+    sudo umount "${CHROOT_SOURCES_DIR}"
+    sync
+    sudo umount "${CHROOT_PATCHES_DIR}"
+    sync
+    export BUILD_SYS_HAVE_MOUNT="0"
+}
+    
+do_cleanup()
+{
+    if [[ "${BUILD_SYS_HAVE_MOUNT}" == "1" ]]; then
+        echo "Cleaniing up bind mounts"
+        down_chroot
+    fi
+}
+
 # Allow prefetching
 if [[ ! -z "${PREFETCH}" ]]; then
     build_all
@@ -69,9 +105,14 @@ fi
 # Only build within the chroot.
 if [[ -z "${TOOLCHAIN_CHROOT}" ]]; then
     copy_chroot_system
-    # TODO: demangle gcc
-    # TODO: execute new sub
+    up_chroot
+    # TODO: execute new sub and not this place holder :P
+    sudo chroot "${PKG_INSTALL_DIR}" "/tools/bin/ls" "-la" "/buildsys/sources"
+
+    sleep 1
+    down_chroot
 else
+    # TODO: demangle gcc
     build_all
 fi
 
