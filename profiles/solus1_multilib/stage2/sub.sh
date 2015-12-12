@@ -51,5 +51,6 @@ if [[ ! -e /tools/.cleaned ]]; then
     /usr/bin/strip --strip-unneeded /tools/{,s}bin/*
     rm -rf /tools/{,share}/{info,man,doc}
     echo "cleaned" >> /tools/.cleaned
+    echo "Chowning /tools/ to root"
     sudo chown -R root:root "${PKG_INSTALL_DIR}/tools" || do_fatal "Could not chown rootfs. Please fix."
 fi
