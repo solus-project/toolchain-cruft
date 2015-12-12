@@ -43,3 +43,13 @@ if [[ ! -e /tools/ ]]; then
 fi
 
 build_all
+
+if [[ ! -e /tools/.cleaned ]]; then
+    echo "Cleaning tools rootfs"
+    strip --strip-debug /tools/lib/*
+    strip --strip-debug /tools/lib32/*
+    /usr/bin/strip --strip-unneeded /tools/{,s}bin/*
+    rm -rf /tools/{,share}/{info,man,doc}
+    echo "cleaned" >> /tools/.cleaned
+    sudo chown -R root:root "${PKG_INSTALL_DIR}/tools" || do_fatal "Could not chown rootfs. Please fix."
+fi
