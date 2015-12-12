@@ -68,6 +68,13 @@ prepare_chroot()
     if [[ ! -e "${PKG_INSTALL_DIR}/dev/null" ]]; then
         sudo mknod -m 666 "${PKG_INSTALL_DIR}/dev/null" c 1 3
     fi
+
+    # Partly demangle the LFS style gcc
+    sudo ln -sv /tools/lib/libgcc_s.so{,.1} "${PKG_INSTALL_DIR}/usr/lib64" || :
+    sudo ln -sv /tools/lib32/libgcc_s.so{,.1} "${PKG_INSTALL_DIR}/usr/lib32" || :
+    sudo ln -sv /tools/lib/libstdc++.so{,.6} "${PKG_INSTALL_DIR}/usr/lib64" || :
+    sudo ln -sv /tools/lib32/libstdc++.so{,.6} "${PKG_INSTALL_DIR}/usr/lib32" || :
+
     sudo mount -v --bind /dev/ "${PKG_INSTALL_DIR}/dev"
     sudo mount -v -t devpts devpts "${PKG_INSTALL_DIR}/dev/pts"
     sudo mount -v -t tmpfs shm "${PKG_INSTALL_DIR}/dev/shm"
