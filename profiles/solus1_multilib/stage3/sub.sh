@@ -22,7 +22,7 @@
 
 source "${SUBFILE}"
 
-# PACKAGES=(YADAYADA)
+PACKAGES=(linux-headers)
 
 TOOLCHAIN_ASSETS=(common.sh config.sh master.sh stage_common.sh sub_common.sh)
 
@@ -113,6 +113,9 @@ copy_chroot_system()
     fi
     if [[ ! -e "${PKG_INSTALL_DIR}/bin/bash" ]]; then
         sudo ln -sv /tools/bin/bash "${PKG_INSTALL_DIR}/bin/bash" || do_fatal "Cannot create bash link"
+    fi
+    if [[ ! -e "${PKG_INSTALL_DIR}/bin/sh" ]]; then
+        sudo ln -sv /tools/bin/bash "${PKG_INSTALL_DIR}/bin/sh" || do_fatal "Cannot create sh link"
     fi
 
     for package in "${PACKAGES[@]}" ; do
