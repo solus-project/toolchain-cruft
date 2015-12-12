@@ -1,6 +1,3 @@
-toolchain-cruft
----------------
-
 Scripts to enable bootstrap of the Solus toolchain and core system.
 The need for this scripting arises for two major reasons:
 
@@ -8,7 +5,7 @@ The need for this scripting arises for two major reasons:
  * Solus 2.0 will need to be rebootstapped with a clean root
 
 TODO:
-=====
+----
 
  - [x] Create profile based system
  - [x] Add task tracking (`$PKGNAME.status`)
@@ -19,12 +16,12 @@ TODO:
  - [ ] Have stage3 back up (DESTDIR,install_root) trees
 
 Authors
-=======
+-------
 
  - Ikey Doherty <ikey@solus-project.com>
 
 License
-========
+-------
 
 toolchain-cruft is made available under the terms of the MIT license.
 Please see `LICENSE` for details.
