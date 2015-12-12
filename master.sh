@@ -69,5 +69,6 @@ fi
 
 
 pushd "${PROFILEDIR}/${BUILD_PROFILE}" >/dev/null || do_fatal "Cannot change to build profile dir"
+eval PREFETCH="1" "${profile_file}" || do_fatal "Profile prefetch failed for ${BUILD_PROFILE}"
 eval "${profile_file}" || do_fatal "Profile build failed for ${BUILD_PROFILE}"
 popd >/dev/null

@@ -11,7 +11,7 @@ TODO:
  - [x] Add task tracking (`$PKGNAME.status`)
  - [x] Set up a stage1 cross-compiler
  - [x] Create a stage2 /tools/ style rootfs
- - [ ] Prefetch all downloads, avoid wget in chroot system
+ - [x] Prefetch all downloads, avoid wget in chroot system
  - [ ] Create a stage3 chroot base "final" builder
  - [ ] Have stage3 back up (DESTDIR,install_root) trees
 

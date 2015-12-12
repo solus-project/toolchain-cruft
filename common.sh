@@ -130,6 +130,10 @@ function pkg_extract()
     local build_dir=`pkg_build_dir`
     local tarball=`pkg_tarball`
 
+    if [[ ! -e "${tarball}" ]]; then
+        do_fatal "Missing tarball, this should not happen"
+    fi
+
     if [[ -d "${pkg_dir}" ]]; then
         rm -rf "${pkg_dir}"
     fi
@@ -203,7 +207,7 @@ function handle_args()
         do_fatal "Missing arguments for ${PKG_NAME}"
     fi
     case $1 in
-        fetch)
+        prefetch)
             pkg_fetch
             ;;
         setup)

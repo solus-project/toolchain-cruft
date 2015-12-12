@@ -58,7 +58,7 @@ function build_package()
             return
             ;;
         *)
-            steps=(fetch setup build install)
+            steps=(setup build install)
             ;;
     esac
 
@@ -71,6 +71,19 @@ function build_package()
     done
 }
 
+function prefetch_package()
+{
+    if [[ -z "${1}" ]]; then
+        echo "Missing package. Aborting"
+        exit 1
+    fi
+
+    local tfile="${WORKDIR}/${1}.status"
+    local tstatus="$(cat ${tfile} 2>/dev/null)"
+
+    eval "./${1}.sh" prefetch|| do_fatal "Failure in ${1}: prefetch"
+}
+
 function build_all()
 {
     if [[ -z "${PACKAGES}" ]]; then
@@ -79,8 +92,13 @@ function build_all()
     fi
 
     for pkg in "${PACKAGES[@]}" ; do
-        echo "Building package: ${pkg}"
-        build_package "${pkg}"
+        if [[ ! -z "${PREFETCH}" ]]; then
+            echo "Prefetching package: ${pkg}"
+            prefetch_package "${pkg}"
+        else
+            echo "Building package: ${pkg}"
+            build_package "${pkg}"
+        fi
     done
 }
 
