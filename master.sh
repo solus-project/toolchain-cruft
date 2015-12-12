@@ -20,6 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+# We might be in a chroot.
+if [[ "${1}" == "CHROOTED_BUILD" ]]; then
+    export TOOLCHAIN_CHROOT="1"
+    export PATH="/usr/bin:/usr/sbin:/bin:/sbin:/tools/bin:/tools/sbin"
+    cd /buildsys/
+fi
+
 . config.sh
 
 export TOOLCHAIN
@@ -49,9 +56,12 @@ function do_fatal()
 }
 
 # Construct support directories
-if [[ ! -d "${SOURCESDIR}" ]]; then
-    mkdir -p "${SOURCESDIR}" || do_fatal "Cannot create sources directory"
+if [[ -z "${TOOLCHAIN_CHROOT}" ]]; then
+    if [[ ! -d "${SOURCESDIR}" ]]; then
+        mkdir -p "${SOURCESDIR}" || do_fatal "Cannot create sources directory"
+    fi
 fi
+
 export SOURCESDIR="$(realpath ${SOURCESDIR})"
 
 if [[ ! -d "${WORKDIRBASE}" ]]; then
@@ -71,6 +81,8 @@ fi
 
 
 pushd "${PROFILEDIR}/${BUILD_PROFILE}" >/dev/null || do_fatal "Cannot change to build profile dir"
-eval PREFETCH="1" "${profile_file}" || do_fatal "Profile prefetch failed for ${BUILD_PROFILE}"
+if [[ -z "${TOOLCHAIN_CHROOT}" ]]; then
+    eval PREFETCH="1" "${profile_file}" || do_fatal "Profile prefetch failed for ${BUILD_PROFILE}"
+fi
 eval "${profile_file}" || do_fatal "Profile build failed for ${BUILD_PROFILE}"
 popd >/dev/null
