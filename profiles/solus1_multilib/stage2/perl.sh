@@ -20,26 +20,45 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source "${SUBFILE}"
+# Always set PKG_NAME
+PKG_NAME="xz"
+PKG_URL="http://www.cpan.org/src/5.0/perl-5.20.1.tar.gz"
+PKG_HASH="fef10210f9e6f4dc2d190be0aee8e1fa2af664630f1d415868d33eebca26d4b5"
 
-PACKAGES=(libstdc++ binutils gcc ncurses bash coreutils util-linux grep
-          sed tar bzip2 gzip xz diffutils patch file findutils gawk gettext
-          m4 make texinfo perl)
+CONFIGURE_OPTIONS+="CFLAGS=\"${CFLAGS} -D_FILE_OFFSET_BITS=64\""
+source "${FUNCTIONSFILE}"
 
-old_path="${PATH}"
+pkg_setup()
+{
+    set -e
+    pkg_extract
 
-export PATH="/tools/bin:/tools/usr/bin:${PATH}"
+    pushd $(pkg_source_dir) >/dev/null
 
-# We also have our own pre-requisites on the toolchain..
-export CONFIGURE_OPTIONS="--prefix=/tools "
+    export CC="${XTOOLCHAIN}-gcc"
+    export AR="${XTOOLCHAIN}-ar"
+    export RANLIB="${XTOOLCHAIN}-ranlib"
+    # Always force compiler, otherwise it'll link against host libpthread, librt, etc
+    sh ./Configure -des -Dprefix=/tools -Dlibs=-lm -Dcc="${XTOOLCHAIN}-gcc"
+}
 
-if [[ ! -d "${PKG_INSTALL_DIR}/tools" ]]; then
-    mkdir -p "${PKG_INSTALL_DIR}/tools" || do_fatal "Cannot create required tools directory"
-fi
+pkg_build()
+{
+    set -e
+    export LC_ALL="C"
+    export LANG="C"
+    pushd $(pkg_source_dir) >/dev/null
+    pkg_make
+}
 
-# Ensure we have a /tools/ symlink
-if [[ ! -e /tools/ ]]; then
-    sudo ln -sv "${PKG_INSTALL_DIR}/tools" /tools || do_fatal "Cannot create required /tools/ symlink"
-fi
+pkg_install()
+{
+    set -e
+    export LC_ALL="C"
+    export LANG="C"
+    pushd $(pkg_source_dir) >/dev/null
+    pkg_make install
+}
 
-build_all
+# Now handle the arguments
+handle_args $*
