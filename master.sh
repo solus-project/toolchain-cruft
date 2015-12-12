@@ -40,6 +40,8 @@ SOURCESDIR="sources"
 WORKDIRBASE="BUILD"
 PKG_INSTALL_DIR="BUILD/install"
 
+export SYSTEM_BASE_DIR=`realpath $(dirname ${0})`
+
 function do_fatal()
 {
     echo "$*"

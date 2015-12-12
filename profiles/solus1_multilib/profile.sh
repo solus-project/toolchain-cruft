@@ -22,6 +22,6 @@
 
 source "${STAGEFILE}"
 
-STAGES=(1 2)
+STAGES=(1 2 3)
 
 execute_stages
