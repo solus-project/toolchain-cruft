@@ -22,7 +22,7 @@
 
 source "${SUBFILE}"
 
-PACKAGES=(linux-headers)
+PACKAGES=(linux-headers glibc)
 
 TOOLCHAIN_ASSETS=(common.sh config.sh master.sh stage_common.sh sub_common.sh)
 
@@ -75,9 +75,19 @@ prepare_chroot()
     sudo ln -sv /tools/lib/libstdc++.so{,.6} "${PKG_INSTALL_DIR}/usr/lib64" || :
     sudo ln -sv /tools/lib32/libstdc++.so{,.6} "${PKG_INSTALL_DIR}/usr/lib32" || :
 
+    if [[ ! -e "${PKG_INSTALL_DIR}/usr/lib64/ld-linux-x86-64.so.2" ]]; then
+        sudo ln -sv /tools/lib64/ld-2.22.so "${PKG_INSTALL_DIR}/usr/lib64/ld-linux-x86-64.so.2"
+    fi
+
+    for item in cat echo grep pwd stty ; do
+        if [[ ! -e "${PKG_INSTALL_DIR}/bin/${item}" ]]; then
+            sudo ln -sv "/tools/bin/${item}" "${PKG_INSTALL_DIR}/bin/${item}"
+        fi
+    done
+
     sudo mount -v --bind /dev/ "${PKG_INSTALL_DIR}/dev"
-    sudo mount -v -t devpts devpts "${PKG_INSTALL_DIR}/dev/pts"
-    sudo mount -v -t tmpfs shm "${PKG_INSTALL_DIR}/dev/shm"
+    sudo mount -v --bind /dev/shm "${PKG_INSTALL_DIR}/dev/shm"
+    sudo mount -v --bind /dev/pts "${PKG_INSTALL_DIR}/dev/pts"
     if [[ ! -d "${PKG_INSTALL_DIR}/sys" ]]; then
         sudo mkdir -pv "${PKG_INSTALL_DIR}/sys"
     fi
