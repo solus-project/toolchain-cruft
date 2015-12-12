@@ -33,9 +33,31 @@ CHROOT_PROFILE_DIR="${CHROOT_PREFIX}/profiles/${BUILD_PROFILE}"
 CHROOT_SOURCES_DIR="${CHROOT_PREFIX}/sources" # /buildsys/sources
 CHROOT_PATCHES_DIR="${CHROOT_PREFIX}/patches" # /buildsys/patches
 
+NORMAL_DIRECTORIES=(
+    /usr/include /usr/share/man /usr/share/doc /usr/lib64 /usr/lib32 /usr/bin /usr/sbin
+    /bin /sbin /lib64 /lib32
+)
+
 prepare_chroot()
 {
     set -e
+
+    # Defines the filesystem characteristics pretty much permanently.
+    # Tread careful
+    for directory in "${NORMAL_DIRECTORIES[@]}" ; do
+        tgt="${PKG_INSTALL_DIR}/${directory}"
+        if [[ ! -d "${tgt}" ]]; then
+            sudo mkdir -pv "${tgt}"
+        fi
+    done
+
+    # Makes lib64 primary, with "lib" as a symlink
+    if [[ ! -e "${PKG_INSTALL_DIR}/lib" ]]; then
+        sudo ln -sv lib64 "${PKG_INSTALL_DIR}/lib"
+    fi
+    if [[ ! -e "${PKG_INSTALL_DIR}/usr/lib" ]]; then
+        sudo ln -sv lib64 "${PKG_INSTALL_DIR}/usr/lib"
+    fi
 
     if [[ ! -d "${PKG_INSTALL_DIR}/dev" ]]; then
         sudo mkdir -pv "${PKG_INSTALL_DIR}/dev"
