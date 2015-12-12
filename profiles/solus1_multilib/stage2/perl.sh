@@ -25,7 +25,6 @@ PKG_NAME="xz"
 PKG_URL="http://www.cpan.org/src/5.0/perl-5.20.1.tar.gz"
 PKG_HASH="fef10210f9e6f4dc2d190be0aee8e1fa2af664630f1d415868d33eebca26d4b5"
 
-CONFIGURE_OPTIONS+="CFLAGS=\"${CFLAGS} -D_FILE_OFFSET_BITS=64\""
 source "${FUNCTIONSFILE}"
 
 pkg_setup()
