@@ -22,7 +22,7 @@
 
 source "${SUBFILE}"
 
-PACKAGES=(linux-headers glibc binutils)
+PACKAGES=(linux-headers glibc binutils gcc)
 
 TOOLCHAIN_ASSETS=(common.sh config.sh master.sh stage_common.sh sub_common.sh)
 
@@ -75,6 +75,7 @@ prepare_chroot()
     sudo ln -sv /tools/lib/libstdc++.so{,.6} "${PKG_INSTALL_DIR}/usr/lib64" || :
     sudo ln -sv /tools/lib32/libstdc++.so{,.6} "${PKG_INSTALL_DIR}/usr/lib32" || :
 
+    sudo install -dv -m 1777 "${PKG_INSTALL_DIR}/tmp" "${PKG_INSTALL_DIR}/var/tmp" || :
     if [[ ! -e "${PKG_INSTALL_DIR}/usr/lib64/ld-linux-x86-64.so.2" ]]; then
         sudo ln -sv /tools/lib64/ld-2.22.so "${PKG_INSTALL_DIR}/usr/lib64/ld-linux-x86-64.so.2"
     fi
