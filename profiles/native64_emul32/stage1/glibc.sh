@@ -29,26 +29,35 @@ source "${FUNCTIONSFILE}"
 
 # We told GCC we didn't have any headers (lied), but here we now
 # give glibc the system include path, /usr/include
-CONFIGURE_COMMON="--disable-profile \
-                  --enable-kernel=2.6.25 \
-                  --enable-add-ons \
-                  --without-selinux \
-                  libc_cv_forced_unwind=yes \
-                  libc_cv_ctors_header=yes \
-                  --with-headers=/usr/include \
-                  libc_cv_c_cleanup=yes"
-
+CONFIGURE_COMMON="  --with-tls \
+                    --with-headers=/usr/include \
+                    --with-__thread \
+                    --enable-add-ons \
+                    --enable-bind-now \
+                    --enable-kernel=2.6.25 \
+                    --enable-stackguard-randomization \
+                    --without-cvs \
+                    --without-gd \
+                    --without-selinux \
+                    --disable-profile \
+                    --prefix=/usr \
+                    --mandir=/usr/share/man \
+                    --infodir=/usr/share/info \
+                    --libexecdir=%libdir%/misc \
+                    --enable-obsolete-rpc \
+                    --build=${TOOLCHAIN} \
+                    --with-pkgversion='Solus Project' \
+                    libc_cv_forced_unwind=yes \
+                    libc_cv_ctors_header=yes \
+                    --with-headers=/usr/include \
+                    libc_cv_c_cleanup=yes"
 CONFIGURE_OPTIONS32="${CONFIGURE_OPTIONS} \
                      ${CONFIGURE_COMMON} \
-                     --host=${XTOOLCHAIN32} \
-                     --build=${TOOLCHAIN} \
                      --libdir=/usr/lib32 \
                      CC=\"${XTOOLCHAIN}-gcc -m32\" \
                      CXX=\"${XTOOLCHAIN}-g++ -m32\" "
 CONFIGURE_OPTIONS64="${CONFIGURE_OPTIONS} \
                      ${CONFIGURE_COMMON} \
-                     --host=${XTOOLCHAIN} \
-                     --build=${TOOLCHAIN} \
                      --libdir=/usr/lib64 \
                      CC=\"${XTOOLCHAIN}-gcc -m64\" \
                      CXX=\"${XTOOLCHAIN}-g++ -m64\" "
@@ -64,6 +73,7 @@ pkg_setup()
 
     # Now extract our own..
     pushd "${sourcedir}" >/dev/null || do_fatal "Could not change to source dir"
+    sed -i -e 's/-lgcc_eh//g' Makeconfig
     # patch glibc regression
     sed -e '/ia32/s/^/1:/' -e '/SSE2/s/^1://' -i  sysdeps/i386/i686/multiarch/mempcpy_chk.S
     popd >/dev/null

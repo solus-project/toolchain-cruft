@@ -25,19 +25,28 @@ PKG_NAME="binutils"
 PKG_URL="http://ftp.gnu.org/gnu/binutils/binutils-2.25.1.tar.bz2"
 PKG_HASH="b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22"
 
+SYSTEM_LIB_DIRS="/usr/lib64:/usr/lib:/lib:/lib64:/usr/lib32:/lib32"
 source "${FUNCTIONSFILE}"
 
 # Define overrides
-CONFIGURE_OPTIONS+="--with-lib-path=/usr/lib64:/usr/lib:/lib:/lib64:/usr/lib32:/lib32 \
-                    --disable-nls \
-                    --disable-werror \
+CONFIGURE_OPTIONS+="--with-lib-path=\"${SYSTEM_LIB_DIRS}\" \
+                    --enable-lto \
+                    --enable-multilib \
                     --disable-gold \
-                    --target=${XTOOLCHAIN} \
-                    --enable-64-bit-bfd"
+                    --disable-werror \
+                    --enable-plugins \
+                    --enable-64-bit-bfd \
+                    --target=\"${TOOLCHAIN}\" \
+                    --build=\"${TOOLCHAIN}\""
 
-pkg_install()
+pkg_build
 {
-    make_install "tooldir=/usr"
+    pkg_make "tooldir=/usr"
+}
+
+pkg_install
+{
+    pkg_make "tooldir=/usr"
 }
 
 # Now handle the arguments

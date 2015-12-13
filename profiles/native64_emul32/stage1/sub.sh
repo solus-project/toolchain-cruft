@@ -22,6 +22,6 @@
 
 source "${SUBFILE}"
 
-PACKAGES=(binutils gcc)
+PACKAGES=(binutils gcc glibc)
 
 build_all

@@ -34,8 +34,11 @@ declare -A PKG_EXTRAS=(
 
 source "${FUNCTIONSFILE}"
 
-CONFIGURE_OPTIONS+="--target=${XTOOLCHAIN} \
+CONFIGURE_OPTIONS+="--target=${TOOLCHAIN} \
+                    --build=${TOOLCHAIN} \
+                    --host=${TOOLCHAIN} \
                     --enable-languages=c,c++ \
+                    --with-pkgversion='Solus Project' \
                     --with-arch32=i686 \
                     --with-newlib \
                     --without-headers \
@@ -78,6 +81,13 @@ pkg_setup()
     popd >/dev/null
 
     # Now go back to the main configure routine
+
+    pushd $(pkg_source_dir) > /dev/null || do_fatal "Cannot cd to to GCC build dir"
+    # as seen in slackware
+    mkdir include
+    touch include/limits.h
+    popd >/dev/null
+
     pkg_configure
 }
 
