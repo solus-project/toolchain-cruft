@@ -22,7 +22,7 @@
 
 source "${SUBFILE}"
 
-PACKAGES=(linux-headers glibc gcc)
+PACKAGES=(linux-headers glibc)
 
 TOOLCHAIN_ASSETS=(common.sh config.sh master.sh stage_common.sh sub_common.sh)
 
