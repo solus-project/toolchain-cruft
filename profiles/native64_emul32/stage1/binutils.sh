@@ -41,12 +41,18 @@ CONFIGURE_OPTIONS+="--with-lib-path=\"${SYSTEM_LIB_DIRS}\" \
 
 pkg_build()
 {
+    set -e
+    pushd "$(pkg_build_dir)" > /dev/null || do_fatal "Cannot cd to build dir"
     pkg_make "tooldir=/usr"
+    popd >/dev/null
 }
 
 pkg_install()
 {
+    set -e
+    pushd "$(pkg_build_dir)" > /dev/null || do_fatal "Cannot cd to build dir"
     pkg_make "tooldir=/usr"
+    popd >/dev/null
 }
 
 # Now handle the arguments
