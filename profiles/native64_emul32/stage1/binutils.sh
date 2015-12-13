@@ -39,12 +39,12 @@ CONFIGURE_OPTIONS+="--with-lib-path=\"${SYSTEM_LIB_DIRS}\" \
                     --target=\"${TOOLCHAIN}\" \
                     --build=\"${TOOLCHAIN}\""
 
-pkg_build
+pkg_build()
 {
     pkg_make "tooldir=/usr"
 }
 
-pkg_install
+pkg_install()
 {
     pkg_make "tooldir=/usr"
 }
