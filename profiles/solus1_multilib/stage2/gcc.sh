@@ -92,7 +92,7 @@ pkg_setup()
 
     pushd "${builddir}" > /dev/null || do_fatal "Cannot cd to build dir"
     # Now go back to the main configure routine
-    eval CXX="${XTOOLCHAIN}-c++" CC="${XTOOLCHAIN}-gcc" AR="${XTOOLCHAIN}-ar" RANLIB="${XTOOLCHAIN}-ranlib" "$(pkg_source_dir)/configure" $CONFIGURE_OPTIONS
+    eval CXX="${XTOOLCHAIN}-g++" CC="${XTOOLCHAIN}-gcc" AR="${XTOOLCHAIN}-ar" RANLIB="${XTOOLCHAIN}-ranlib" "$(pkg_source_dir)/configure" $CONFIGURE_OPTIONS
     popd >/dev/null
 }
 

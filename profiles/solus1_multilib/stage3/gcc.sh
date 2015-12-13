@@ -44,6 +44,20 @@ CONFIGURE_OPTIONS+="--enable-languages=c,c++ \
                     --target=\"${TOOLCHAIN}\" \
                     --with-multilib-list=m32,m64"
 
+demangle_root()
+{
+    # Undo the LFS style /tools change, credit to them
+    gcc -dumpspecs | sed -e 's@/tools@@g'                   \
+        -e '/\*startfile_prefix_spec:/{n;s@.*@/usr/lib/ @}' \
+        -e '/\*cpp:/{n;s@$@ -isystem /usr/include@}' >      \
+        `dirname $(gcc --print-libgcc-file-name)`/specs
+
+    mv -v /tools/bin/{ld,ld-old} || :
+    mv -v /tools/$(gcc -dumpmachine)/bin/{ld,ld-old} || :
+    cp -v /tools/bin/ld-new /tools/bin/ld || :
+    ln -sv /tools/bin/ld /tools/$(gcc -dumpmachine)/bin/ld || :
+}
+
 pkg_setup()
 {
     local sourcedir=`pkg_source_dir`

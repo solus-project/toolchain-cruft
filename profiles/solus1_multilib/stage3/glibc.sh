@@ -31,14 +31,7 @@ CONFIGURE_COMMON="--prefix=/usr \
                   --disable-profile \
                   --enable-kernel=2.6.25 \
                   --enable-add-ons \
-                  --without-selinux \
-                  --enable-bind-now \
-                  --with-tls \
-                  --with-__thread \
-                  --without-gd \
-                  --enable-stackguard-randomization \
                   --enable-obsolete-rpc \
-                  --with-headers=/usr/include \
                   libc_cv_forced_unwind=yes \
                   libc_cv_ctors_header=yes \
                   libc_cv_c_cleanup=yes"
@@ -46,13 +39,11 @@ CONFIGURE_COMMON="--prefix=/usr \
 CONFIGURE_OPTIONS32="${CONFIGURE_OPTIONS} \
                      ${CONFIGURE_COMMON} \
                      --build=${XTOOLCHAIN} \
-                     --host=${TOOLCHAIN32} \
                      --libdir=/usr/lib32 \
                      CC=\"${XTOOLCHAIN}-gcc -m32\" \
                      CXX=\"${XTOOLCHAIN}-g++ -m32\" "
 CONFIGURE_OPTIONS64="${CONFIGURE_OPTIONS} \
                      ${CONFIGURE_COMMON} \
-                     --host=${TOOLCHAIN} \
                      --build=${XTOOLCHAIN} \
                      CC=\"${XTOOLCHAIN}-gcc -m64\" \
                      CXX=\"${XTOOLCHAIN}-g++ -m64\" "
